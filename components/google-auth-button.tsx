@@ -9,19 +9,17 @@ export default function GoogleSignInButton() {
   const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
 
   const handleGoogleSignIn = () => {
-    // Your Flask backend URL - adjust this based on your environment
     const FLASK_BACKEND_URL =
       process.env.NEXT_PUBLIC_FLASK_BACKEND_URL || 'http://localhost:8080';
 
-    // Set the callback to the dashboard
-    const nextAppCallback = '/dashboard';
+    // Get the full URL for the callback including the Next.js app domain
+    const nextAppCallback = `${window.location.origin}${callbackUrl}`;
 
     // Include the callbackUrl as a query parameter
     const loginUrl = `${FLASK_BACKEND_URL}/login?callback=${encodeURIComponent(
       nextAppCallback
     )}`;
 
-    // Direct browser navigation to the Flask login endpoint
     window.location.href = loginUrl;
   };
 

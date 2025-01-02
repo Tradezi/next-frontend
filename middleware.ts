@@ -2,16 +2,22 @@
 // https://next-auth.js.org/configuration/nextjs#middleware
 // https://nextjs.org/docs/app/building-your-application/routing/middleware
 
-import NextAuth from 'next-auth';
-import authConfig from './auth.config';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const { auth } = NextAuth(authConfig);
+export function middleware(request: NextRequest) {
+  // Get the token from the cookie set by your Flask backend
+  const authToken = request.cookies.get('auth_token'); // Make sure this matches your Flask cookie name
 
-export default auth((req) => {
-  if (!req.auth) {
-    const url = req.url.replace(req.nextUrl.pathname, '/');
-    return Response.redirect(url);
+  // If accessing dashboard without auth token, redirect to login
+  if (!authToken && request.nextUrl.pathname.startsWith('/dashboard')) {
+    const loginUrl = new URL('/', request.url);
+    return NextResponse.redirect(loginUrl);
   }
-});
 
-export const config = { matcher: ['/dashboard/:path*'] };
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/dashboard/:path*']
+};
