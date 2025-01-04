@@ -12,6 +12,15 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DataTable } from '@/components/ui/data-table';
+import { columns, Order } from './columns';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface User {
   email: string;
@@ -20,6 +29,7 @@ interface User {
 
 export default function page() {
   const [user, setUser] = useState<User | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     fetch('/api/user/details', {
@@ -38,6 +48,23 @@ export default function page() {
       });
   }, []);
 
+  useEffect(() => {
+    fetch('/api/order/user/total', {
+      credentials: 'include',
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Failed to fetch order totals');
+        return response.json();
+      })
+      .then((data) => setOrders(data))
+      .catch((error) => {
+        console.error('Order totals error:', error);
+      });
+  }, []);
+
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-2">
@@ -46,14 +73,12 @@ export default function page() {
             Hi {user && user.email}, Welcome back 👋
           </h2>
         </div>
-        <Tabs defaultValue="overview" className="space-y-4">
+        <Tabs defaultValue="portfolio" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger>
+            <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+            <TabsTrigger value="market">Market</TabsTrigger>
           </TabsList>
-          <TabsContent value="overview" className="space-y-4">
+          <TabsContent value="portfolio" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -157,6 +182,112 @@ export default function page() {
                   </p>
                 </CardContent>
               </Card>
+            </div>
+            <div className="mt-6">
+              <DataTable
+                columns={columns}
+                data={orders}
+                searchKey="stockSymbol"
+              />
+            </div>
+          </TabsContent>
+          <TabsContent value="market" className="space-y-4">
+            <div className="mb-4 flex justify-end">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700">
+                    Buy Stock
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Buy Stock</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Enter the details to place your order
+                      </p>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="symbol">Symbol</Label>
+                        <Input
+                          id="symbol"
+                          className="col-span-2"
+                          placeholder="AAPL"
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="quantity">Quantity</Label>
+                        <Input
+                          id="numOfStocks"
+                          type="number"
+                          className="col-span-2"
+                          placeholder="1"
+                        />
+                      </div>
+                      <Button
+                        className="mt-2"
+                        onClick={async () => {
+                          const symbol = (
+                            document.getElementById(
+                              'symbol'
+                            ) as HTMLInputElement
+                          ).value;
+                          const quantity = (
+                            document.getElementById(
+                              'numOfStocks'
+                            ) as HTMLInputElement
+                          ).value;
+                          if (!symbol || !quantity) {
+                            alert('Please fill in both symbol and quantity.');
+                            return;
+                          }
+                          try {
+                            const response = await fetch('/api/order/create', {
+                              method: 'POST',
+                              credentials: 'include',
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json'
+                              },
+                              body: JSON.stringify({
+                                symbol: symbol.toUpperCase(),
+                                numOfStocks: parseInt(quantity),
+                                type: 'BUY'
+                              })
+                            });
+                            if (!response.ok) {
+                              const error = await response.json();
+                              throw new Error(
+                                error.message || 'Failed to place order'
+                              );
+                            }
+                            alert('Order placed successfully!');
+                            // Refresh orders list
+                            window.location.reload();
+                          } catch (error) {
+                            console.error('Error placing order:', error);
+                            alert(
+                              error instanceof Error
+                                ? error.message
+                                : 'Failed to place order. Please try again.'
+                            );
+                          }
+                        }}
+                      >
+                        Place Order
+                      </Button>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="mt-6">
+              <DataTable
+                columns={columns}
+                data={orders}
+                searchKey="stockSymbol"
+              />
             </div>
           </TabsContent>
         </Tabs>
