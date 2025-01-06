@@ -118,6 +118,12 @@ export const navItems: NavItem[] = [
     label: 'Dashboard'
   },
   {
+    title: 'Stock Market',
+    href: '/dashboard/market',
+    icon: 'trending',
+    label: 'market'
+  },
+  {
     title: 'User',
     href: '/dashboard/user',
     icon: 'user',

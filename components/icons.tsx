@@ -28,7 +28,8 @@ import {
   User,
   User2Icon,
   UserX2Icon,
-  X
+  X,
+  TrendingUpIcon
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -111,5 +112,6 @@ export const Icons = {
       />
     </svg>
   ),
-  check: Check
+  check: Check,
+  trending: TrendingUpIcon
 };
