@@ -21,8 +21,10 @@ import {
 } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface User {
+  name: string;
   email: string;
   balance: number;
 }
@@ -30,7 +32,8 @@ interface User {
 export default function page() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
-
+  const [investedAmount, setInvestedAmount] = useState<number>(0);
+  const [currentPrice, setCurrentPrice] = useState<number>(0);
   useEffect(() => {
     fetch('/api/user/details', {
       credentials: 'include',
@@ -59,7 +62,17 @@ export default function page() {
         if (!response.ok) throw new Error('Failed to fetch order totals');
         return response.json();
       })
-      .then((data) => setOrders(data))
+      .then((data) => {
+        setOrders(data);
+        const total = data.reduce((sum: number, order: Order) => {
+          return sum + order.numOfStocks * order.stockPrice;
+        }, 0);
+        setInvestedAmount(total);
+        const currentPrice = data.reduce((sum: number, order: Order) => {
+          return sum + order.numOfStocks * order.currentPrice;
+        }, 0);
+        setCurrentPrice(currentPrice);
+      })
       .catch((error) => {
         console.error('Order totals error:', error);
       });
@@ -70,7 +83,11 @@ export default function page() {
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-2xl font-bold tracking-tight">
-            Hi {user && user.email}, Welcome back 👋
+            {user ? (
+              `Hi ${user.name}, Welcome back 👋`
+            ) : (
+              <Skeleton className="h-8 w-[300px]" />
+            )}
           </h2>
         </div>
         <Tabs defaultValue="portfolio" className="space-y-4">
@@ -99,7 +116,13 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$45,231.89</div>
+                  {investedAmount !== undefined ? (
+                    <div className="text-2xl font-bold">
+                      ₹{investedAmount.toFixed(2)}
+                    </div>
+                  ) : (
+                    <Skeleton className="h-8 w-[120px]" />
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Total amount invested
                   </p>
@@ -124,7 +147,13 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$52,350.00</div>
+                  {currentPrice !== undefined ? (
+                    <div className="text-2xl font-bold">
+                      ₹{currentPrice.toFixed(2)}
+                    </div>
+                  ) : (
+                    <Skeleton className="h-8 w-[120px]" />
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Current portfolio value
                   </p>
@@ -149,12 +178,34 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-green-600">
-                    +$7,118.11
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    +15.7% overall return
-                  </p>
+                  {currentPrice !== undefined &&
+                  investedAmount !== undefined ? (
+                    <>
+                      <div
+                        className={`text-2xl font-bold ${
+                          currentPrice > investedAmount
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}
+                      >
+                        {currentPrice > investedAmount ? `+` : `-`}₹
+                        {Math.abs(currentPrice - investedAmount).toFixed(2)}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {currentPrice > investedAmount ? `+` : `-`}
+                        {Math.abs(
+                          ((currentPrice - investedAmount) / investedAmount) *
+                            100
+                        ).toFixed(2)}
+                        % overall return
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <Skeleton className="h-8 w-[120px]" />
+                      <Skeleton className="mt-1 h-4 w-[80px]" />
+                    </>
+                  )}
                 </CardContent>
               </Card>
               <Card>
@@ -174,9 +225,13 @@ export default function page() {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">
-                    ${user ? user.balance.toFixed(2) : 'Loading...'}
-                  </div>
+                  {user ? (
+                    <div className="text-2xl font-bold">
+                      ₹{user.balance.toFixed(2)}
+                    </div>
+                  ) : (
+                    <Skeleton className="h-8 w-[120px]" />
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Current account balance
                   </p>
