@@ -215,6 +215,35 @@ export default function MarketPage() {
             columns={columns}
             data={stocks}
             searchKey="symbol"
+            onFilteredDataChange={(filteredData) => {
+              // Get symbols from filtered data
+              const symbols = filteredData.map((stock) => stock.symbol);
+
+              // Fetch prices for filtered stocks
+              fetch('/api/stock/price/bulk', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json'
+                },
+                body: JSON.stringify({ symbols })
+              })
+                .then((response) => response.json())
+                .then((priceData) => {
+                  setStocks((prevStocks) => {
+                    return prevStocks.map((stock) => ({
+                      ...stock,
+                      currentPrice: priceData.find(
+                        (p: PriceInfo) => p.symbol === stock.symbol
+                      )?.currentPrice
+                    }));
+                  });
+                })
+                .catch((error) => {
+                  console.error('Stock prices error:', error);
+                });
+            }}
             pagination={{
               currentPage,
               pageSize: ITEMS_PER_PAGE,

@@ -20,7 +20,7 @@ import {
 import { Input } from './input';
 import { Button } from './button';
 import { ScrollArea, ScrollBar } from './scroll-area';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -32,58 +32,62 @@ interface DataTableProps<TData, TValue> {
     totalItems: number;
     onPageChange: (page: number) => void;
   };
+  onFilteredDataChange?: (data: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-  pagination
+  pagination,
+  onFilteredDataChange
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
 
-  // Get paginated subset of data
+  // First filter the entire dataset
+  const filteredData = data.filter((item) => {
+    const value = (item as any)[searchKey]?.toString().toLowerCase();
+    return globalFilter === '' || value?.includes(globalFilter.toLowerCase());
+  });
+
+  // Then paginate the filtered results
   const startIndex =
     (pagination?.currentPage ?? 0) * (pagination?.pageSize ?? 10);
   const endIndex = startIndex + (pagination?.pageSize ?? 10);
-  const paginatedData = data.slice(startIndex, endIndex);
+  const paginatedData = filteredData.slice(startIndex, endIndex);
 
   const table = useReactTable({
-    data: paginatedData, // Use paginated data instead of all data
+    data: paginatedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, columnId, filterValue) => {
-      const search = filterValue.toLowerCase();
-      const value = row.getValue(searchKey) as string;
-      return value?.toLowerCase().includes(search);
-    },
     state: {
-      globalFilter,
       pagination: {
         pageIndex: pagination?.currentPage ?? 0,
         pageSize: pagination?.pageSize ?? 10
       }
     },
     manualPagination: true,
-    pageCount: Math.ceil(
-      (pagination?.totalItems ?? 0) / (pagination?.pageSize ?? 10)
-    )
+    pageCount: Math.ceil(filteredData.length / (pagination?.pageSize ?? 10))
   });
 
-  /* this can be used to get the selectedrows 
-  console.log("value", table.getFilteredSelectedRowModel()); */
+  // Notify parent of visible data changes
+  useEffect(() => {
+    onFilteredDataChange?.(paginatedData);
+  }, [globalFilter, pagination?.currentPage]);
+
+  // Reset to first page when filter changes
+  useEffect(() => {
+    if (pagination?.onPageChange) {
+      pagination.onPageChange(0);
+    }
+  }, [globalFilter]);
 
   return (
     <>
       <Input
         placeholder={`Search ${searchKey}...`}
-        value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
-        onChange={(event) =>
-          table.getColumn(searchKey)?.setFilterValue(event.target.value)
-        }
+        value={globalFilter}
+        onChange={(event) => setGlobalFilter(event.target.value)}
         className="mb-4 w-full"
       />
       <ScrollArea
@@ -155,7 +159,7 @@ export function DataTable<TData, TValue>({
           </Button>
           <div className="text-sm text-muted-foreground">
             Page {pagination.currentPage + 1} of{' '}
-            {Math.ceil(pagination.totalItems / pagination.pageSize)}
+            {Math.ceil(filteredData.length / pagination.pageSize)}
           </div>
           <Button
             variant="outline"
@@ -163,7 +167,7 @@ export function DataTable<TData, TValue>({
             onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
             disabled={
               pagination.currentPage ===
-              Math.ceil(pagination.totalItems / pagination.pageSize) - 1
+              Math.ceil(filteredData.length / pagination.pageSize) - 1
             }
           >
             Next
