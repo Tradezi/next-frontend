@@ -160,16 +160,16 @@ export default function page() {
                 <>
                   <div
                     className={`text-2xl font-bold ${
-                      currentPrice > investedAmount
+                      currentPrice >= investedAmount
                         ? 'text-green-600'
                         : 'text-red-600'
                     }`}
                   >
-                    {currentPrice > investedAmount ? `+` : `-`}₹
+                    {currentPrice >= investedAmount ? `+` : `-`}₹
                     {Math.abs(currentPrice - investedAmount).toFixed(2)}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {currentPrice > investedAmount ? `+` : `-`}
+                    {currentPrice >= investedAmount ? `+` : `-`}
                     {Math.abs(
                       ((currentPrice - investedAmount) / investedAmount) * 100
                     ).toFixed(2)}

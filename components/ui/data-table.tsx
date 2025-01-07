@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   useReactTable
 } from '@tanstack/react-table';
 
@@ -19,6 +20,7 @@ import {
 import { Input } from './input';
 import { Button } from './button';
 import { ScrollArea, ScrollBar } from './scroll-area';
+import { useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -38,11 +40,37 @@ export function DataTable<TData, TValue>({
   searchKey,
   pagination
 }: DataTableProps<TData, TValue>) {
+  const [globalFilter, setGlobalFilter] = useState('');
+
+  // Get paginated subset of data
+  const startIndex =
+    (pagination?.currentPage ?? 0) * (pagination?.pageSize ?? 10);
+  const endIndex = startIndex + (pagination?.pageSize ?? 10);
+  const paginatedData = data.slice(startIndex, endIndex);
+
   const table = useReactTable({
-    data,
+    data: paginatedData, // Use paginated data instead of all data
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel()
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const search = filterValue.toLowerCase();
+      const value = row.getValue(searchKey) as string;
+      return value?.toLowerCase().includes(search);
+    },
+    state: {
+      globalFilter,
+      pagination: {
+        pageIndex: pagination?.currentPage ?? 0,
+        pageSize: pagination?.pageSize ?? 10
+      }
+    },
+    manualPagination: true,
+    pageCount: Math.ceil(
+      (pagination?.totalItems ?? 0) / (pagination?.pageSize ?? 10)
+    )
   });
 
   /* this can be used to get the selectedrows 
@@ -58,7 +86,13 @@ export function DataTable<TData, TValue>({
         }
         className="mb-4 w-full"
       />
-      <ScrollArea className="h-[calc(80vh-220px)] rounded-md border md:h-[calc(80dvh-200px)]">
+      <ScrollArea
+        className={`rounded-md border ${
+          table.getRowModel().rows.length <= 5
+            ? 'h-fit max-h-[300px]'
+            : 'h-[calc(80vh-220px)] md:h-[calc(80dvh-200px)]'
+        }`}
+      >
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -19,6 +19,11 @@ interface StockMetadata {
   currentPrice?: number;
 }
 
+interface PriceInfo {
+  symbol: string;
+  currentPrice: number;
+}
+
 // Define columns for the market data table
 const columns: ColumnDef<StockMetadata>[] = [
   {
@@ -33,7 +38,7 @@ const columns: ColumnDef<StockMetadata>[] = [
     accessorKey: 'currentPrice',
     header: 'Current Price',
     cell: ({ row }) => {
-      const price = row.getValue('currentPrice');
+      const price = row.original.currentPrice;
       return price ? `₹${Number(price).toFixed(2)}` : 'Loading...';
     }
   }
@@ -72,10 +77,11 @@ export default function MarketPage() {
   useEffect(() => {
     if (stocks.length === 0) return;
 
+    // Get symbols for current page only
     const startIndex = currentPage * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    const currentPageStocks = stocks.slice(startIndex, endIndex);
-    const symbols = currentPageStocks.map((stock) => stock.symbol);
+    const visibleStocks = stocks.slice(startIndex, endIndex);
+    const symbols = visibleStocks.map((stock) => stock.symbol);
 
     fetch('/api/stock/price/bulk', {
       method: 'POST',
@@ -91,25 +97,19 @@ export default function MarketPage() {
         return response.json();
       })
       .then((priceData) => {
-        // Update stocks with current prices
         setStocks((prevStocks) => {
-          const updatedStocks = [...prevStocks];
-          currentPageStocks.forEach((stock, index) => {
-            const stockIndex = startIndex + index;
-            if (updatedStocks[stockIndex]) {
-              updatedStocks[stockIndex] = {
-                ...updatedStocks[stockIndex],
-                currentPrice: priceData[stock.symbol]
-              };
-            }
-          });
-          return updatedStocks;
+          return prevStocks.map((stock) => ({
+            ...stock,
+            currentPrice: priceData.find(
+              (p: PriceInfo) => p.symbol === stock.symbol
+            )?.currentPrice
+          }));
         });
       })
       .catch((error) => {
         console.error('Stock prices error:', error);
       });
-  }, [stocks.length, currentPage]);
+  }, [stocks.length, currentPage]); // Add currentPage back to dependencies
 
   // Get paginated data
   const getPaginatedData = () => {
@@ -213,7 +213,7 @@ export default function MarketPage() {
         <div className="mt-6">
           <DataTable
             columns={columns}
-            data={getPaginatedData()}
+            data={stocks}
             searchKey="symbol"
             pagination={{
               currentPage,
