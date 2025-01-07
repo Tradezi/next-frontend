@@ -33,6 +33,7 @@ interface DataTableProps<TData, TValue> {
     onPageChange: (page: number) => void;
   };
   onFilteredDataChange?: (data: TData[]) => void;
+  onRowClick?: (data: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -40,7 +41,8 @@ export function DataTable<TData, TValue>({
   data,
   searchKey,
   pagination,
-  onFilteredDataChange
+  onFilteredDataChange,
+  onRowClick
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
 
@@ -122,6 +124,8 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => onRowClick?.(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
