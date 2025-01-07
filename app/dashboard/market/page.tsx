@@ -4,14 +4,10 @@ import { useState, useEffect } from 'react';
 import PageContainer from '@/components/layout/page-container';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ColumnDef } from '@tanstack/react-table';
+import { Modal } from '@/components/ui/modal';
 
 interface StockMetadata {
   symbol: string;
@@ -212,60 +208,49 @@ export default function MarketPage() {
         </div>
       </div>
 
-      <Popover
-        open={!!selectedStock}
-        onOpenChange={() => setSelectedStock(null)}
+      <Modal
+        title={`Place an order for ${selectedStock?.symbol}`}
+        description={`Current Price: ₹${selectedStock?.currentPrice?.toFixed(
+          2
+        )}`}
+        isOpen={!!selectedStock}
+        onClose={() => setSelectedStock(null)}
       >
-        <PopoverTrigger asChild>
-          <div />
-        </PopoverTrigger>
-        <PopoverContent className="w-80">
-          <div className="grid gap-4">
-            <div className="space-y-2">
-              <h4 className="font-medium leading-none">
-                Place an order for {selectedStock?.symbol}
-              </h4>
-              <p className="text-sm text-muted-foreground">
-                Current Price: ₹{selectedStock?.currentPrice?.toFixed(2)}
-              </p>
-            </div>
-            <div className="grid gap-2">
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="symbol">Symbol</Label>
-                <Input
-                  id="symbol"
-                  className="col-span-2"
-                  value={selectedStock?.symbol || ''}
-                  disabled
-                />
-              </div>
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
-                  id="numOfStocks"
-                  type="number"
-                  className="col-span-2"
-                  placeholder="1"
-                />
-              </div>
-              <div className="mt-2 flex gap-2">
-                <Button
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                  onClick={() => placeOrder('BUY')}
-                >
-                  Buy
-                </Button>
-                <Button
-                  className="flex-1 bg-red-600 hover:bg-red-700"
-                  onClick={() => placeOrder('SELL')}
-                >
-                  Sell
-                </Button>
-              </div>
-            </div>
+        <div className="grid gap-2">
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label htmlFor="symbol">Symbol</Label>
+            <Input
+              id="symbol"
+              className="col-span-2"
+              value={selectedStock?.symbol || ''}
+              disabled
+            />
           </div>
-        </PopoverContent>
-      </Popover>
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label htmlFor="quantity">Quantity</Label>
+            <Input
+              id="numOfStocks"
+              type="number"
+              className="col-span-2"
+              placeholder="1"
+            />
+          </div>
+          <div className="mt-2 flex gap-2">
+            <Button
+              className="flex-1 bg-green-600 hover:bg-green-700"
+              onClick={() => placeOrder('BUY')}
+            >
+              Buy
+            </Button>
+            <Button
+              className="flex-1 bg-red-600 hover:bg-red-700"
+              onClick={() => placeOrder('SELL')}
+            >
+              Sell
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </PageContainer>
   );
 }
