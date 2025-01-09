@@ -13,7 +13,7 @@ interface User {
   balance: number;
 }
 
-export default function page() {
+export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [investedAmount, setInvestedAmount] = useState<number>(0);
