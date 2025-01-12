@@ -10,7 +10,8 @@ export default function GoogleSignInButton() {
 
   const handleGoogleSignIn = () => {
     const FLASK_BACKEND_URL =
-      process.env.NEXT_PUBLIC_FLASK_BACKEND_URL || 'http://localhost:8080';
+      process.env.NEXT_PUBLIC_FLASK_BACKEND_URL ||
+      'http://backend.tradezi.co.in';
 
     // Get the full URL for the callback including the Next.js app domain
     const nextAppCallback = `${window.location.origin}${callbackUrl}`;
