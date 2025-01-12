@@ -7,7 +7,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   // Get the token from the cookie set by your Flask backend
-  const authToken = request.cookies.get('session'); // Make sure this matches your Flask cookie name
+  const authToken = request.cookies.get('session'); // Ensure this matches your Flask cookie name
 
   // If accessing dashboard without auth token, redirect to login
   if (!authToken && request.nextUrl.pathname.startsWith('/dashboard')) {
@@ -15,6 +15,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Allow access to the dashboard if authenticated
   return NextResponse.next();
 }
 
