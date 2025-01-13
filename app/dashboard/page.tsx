@@ -33,6 +33,7 @@ export default function DashboardPage() {
       .then((data) => setUser(data))
       .catch((error) => {
         console.error('Auth error:', error);
+        window.location.href = '/';
       });
   }, []);
 

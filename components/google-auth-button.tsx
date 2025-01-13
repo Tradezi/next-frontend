@@ -1,27 +1,16 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { Button } from './ui/button';
 import { Icons } from './icons';
 
 export default function GoogleSignInButton() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/dashboard';
-
   const handleGoogleSignIn = () => {
     const FLASK_BACKEND_URL =
       process.env.NEXT_PUBLIC_FLASK_BACKEND_URL ||
-      'http://backend.tradezi.co.in';
+      'https://backend.tradezi.co.in';
 
-    // Get the full URL for the callback including the Next.js app domain
-    const nextAppCallback = `${window.location.origin}${callbackUrl}`;
-
-    // Include the callbackUrl as a query parameter
-    const loginUrl = `${FLASK_BACKEND_URL}/login?callback=${encodeURIComponent(
-      nextAppCallback
-    )}`;
-
-    window.location.href = loginUrl;
+    // Redirect to Flask backend's login endpoint
+    window.location.href = `${FLASK_BACKEND_URL}/login`;
   };
 
   return (
