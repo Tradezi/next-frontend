@@ -87,7 +87,8 @@ export default function MarketPage() {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          maxRedirects: 0
         }
       )
       .then((response) => {
@@ -172,7 +173,8 @@ export default function MarketPage() {
                     withCredentials: true,
                     headers: {
                       'Content-Type': 'application/json'
-                    }
+                    },
+                    maxRedirects: 0
                   }
                 )
                 .then((response) => {
