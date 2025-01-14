@@ -89,8 +89,7 @@ export default function MarketPage() {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify({ symbols: symbols }),
-      mode: 'cors'
+      body: JSON.stringify({ symbols: symbols })
     })
       .then((response) => {
         if (!response.ok) throw new Error('Failed to fetch stock prices');
@@ -174,7 +173,6 @@ export default function MarketPage() {
               // Get symbols from filtered data
               const symbols = filteredData.map((stock) => stock.symbol);
 
-              // Fetch prices for filtered stocks
               fetch('/api/stock/price/bulk', {
                 method: 'POST',
                 credentials: 'include',
@@ -182,8 +180,7 @@ export default function MarketPage() {
                   'Content-Type': 'application/json',
                   Accept: 'application/json'
                 },
-                body: JSON.stringify({ symbols: symbols }),
-                mode: 'cors'
+                body: JSON.stringify({ symbols: symbols })
               })
                 .then((response) => response.json())
                 .then((priceData) => {
