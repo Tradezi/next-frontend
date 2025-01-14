@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
 import { columns, Order } from './columns';
 import { Skeleton } from '@/components/ui/skeleton';
+import axios from 'axios';
 
 interface User {
   name: string;
@@ -20,17 +21,14 @@ export default function DashboardPage() {
   const [currentPrice, setCurrentPrice] = useState<number>(0);
 
   useEffect(() => {
-    fetch('/api/user/details', {
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json'
-      }
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error('Not authenticated');
-        return response.json();
+    axios
+      .get('/api/user/details', {
+        withCredentials: true,
+        headers: {
+          Accept: 'application/json'
+        }
       })
-      .then((data) => setUser(data))
+      .then((response) => setUser(response.data))
       .catch((error) => {
         console.error('Auth error:', error);
         window.location.href = '/';
@@ -38,25 +36,25 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/order/user/total', {
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json'
-      }
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error('Failed to fetch order totals');
-        return response.json();
+    axios
+      .get('/api/order/user/total', {
+        withCredentials: true,
+        headers: {
+          Accept: 'application/json'
+        }
       })
-      .then((data) => {
-        setOrders(data);
-        const total = data.reduce((sum: number, order: Order) => {
+      .then((response) => {
+        setOrders(response.data);
+        const total = response.data.reduce((sum: number, order: Order) => {
           return sum + order.numOfStocks * order.stockPrice;
         }, 0);
         setInvestedAmount(total);
-        const currentPrice = data.reduce((sum: number, order: Order) => {
-          return sum + order.numOfStocks * order.currentPrice;
-        }, 0);
+        const currentPrice = response.data.reduce(
+          (sum: number, order: Order) => {
+            return sum + order.numOfStocks * order.currentPrice;
+          },
+          0
+        );
         setCurrentPrice(currentPrice);
       })
       .catch((error) => {
