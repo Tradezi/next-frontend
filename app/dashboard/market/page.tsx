@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ColumnDef } from '@tanstack/react-table';
 import { Modal } from '@/components/ui/modal';
+import axios from 'axios';
 
 interface StockMetadata {
   symbol: string;
@@ -52,18 +53,15 @@ export default function MarketPage() {
 
   // Fetch all stock metadata
   useEffect(() => {
-    fetch('/api/stock/metadata', {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error('Failed to fetch stock metadata');
-        return response.json();
+    axios
+      .get('/api/stock/metadata', {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-      .then((data) => {
-        setStocks(data);
+      .then((response) => {
+        setStocks(response.data);
         setIsLoading(false);
       })
       .catch((error) => {
@@ -76,29 +74,27 @@ export default function MarketPage() {
   useEffect(() => {
     if (stocks.length === 0) return;
 
-    // Get symbols for current page only
     const startIndex = currentPage * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const visibleStocks = stocks.slice(startIndex, endIndex);
     const symbols = visibleStocks.map((stock) => stock.symbol);
 
-    fetch('/api/stock/price/bulk', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ symbols: symbols })
-    })
+    axios
+      .post(
+        '/api/stock/price/bulk',
+        { symbols: symbols },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      )
       .then((response) => {
-        if (!response.ok) throw new Error('Failed to fetch stock prices');
-        return response.json();
-      })
-      .then((priceData) => {
         setStocks((prevStocks) => {
           return prevStocks.map((stock) => ({
             ...stock,
-            currentPrice: priceData.find(
+            currentPrice: response.data.find(
               (p: PriceInfo) => p.symbol === stock.symbol
             )?.currentPrice
           }));
@@ -107,7 +103,7 @@ export default function MarketPage() {
       .catch((error) => {
         console.error('Stock prices error:', error);
       });
-  }, [stocks.length, currentPage]); // Add currentPage back to dependencies
+  }, [stocks.length, currentPage]);
 
   // Get paginated data
   const getPaginatedData = () => {
@@ -126,22 +122,20 @@ export default function MarketPage() {
       return;
     }
     try {
-      const response = await fetch('/api/order/create', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      await axios.post(
+        '/api/order/create',
+        {
           symbol: selectedStock.symbol,
           numOfStocks: parseInt(quantity),
           type: type
-        })
-      });
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to place order');
-      }
+        },
+        {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
       alert('Order placed successfully!');
       window.location.reload();
     } catch (error) {
@@ -168,23 +162,24 @@ export default function MarketPage() {
             searchKey="symbol"
             onRowClick={(stock) => setSelectedStock(stock)}
             onFilteredDataChange={(filteredData) => {
-              // Get symbols from filtered data
               const symbols = filteredData.map((stock) => stock.symbol);
 
-              fetch('/api/stock/price/bulk', {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ symbols: symbols })
-              })
-                .then((response) => response.json())
-                .then((priceData) => {
+              axios
+                .post(
+                  '/api/stock/price/bulk',
+                  { symbols: symbols },
+                  {
+                    withCredentials: true,
+                    headers: {
+                      'Content-Type': 'application/json'
+                    }
+                  }
+                )
+                .then((response) => {
                   setStocks((prevStocks) => {
                     return prevStocks.map((stock) => ({
                       ...stock,
-                      currentPrice: priceData.find(
+                      currentPrice: response.data.find(
                         (p: PriceInfo) => p.symbol === stock.symbol
                       )?.currentPrice
                     }));
