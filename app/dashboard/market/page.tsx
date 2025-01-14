@@ -86,7 +86,8 @@ export default function MarketPage() {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': 'https://backend.tradezi.co.in/*'
       },
       body: JSON.stringify({ symbols: symbols })
     })
@@ -130,7 +131,8 @@ export default function MarketPage() {
         method: 'POST',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': 'https://backend.tradezi.co.in/*'
         },
         body: JSON.stringify({
           symbol: selectedStock.symbol,
