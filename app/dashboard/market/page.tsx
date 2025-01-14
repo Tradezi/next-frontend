@@ -43,6 +43,15 @@ const columns: ColumnDef<StockMetadata>[] = [
 
 const ITEMS_PER_PAGE = 10;
 
+// Create a base axios instance with common config
+const api = axios.create({
+  baseURL: 'https://backend.tradezi.co.in',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 export default function MarketPage() {
   const [stocks, setStocks] = useState<StockMetadata[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -53,13 +62,8 @@ export default function MarketPage() {
 
   // Fetch all stock metadata
   useEffect(() => {
-    axios
-      .get('/api/stock/metadata', {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+    api
+      .get('/stock/metadata')
       .then((response) => {
         setStocks(response.data);
         setIsLoading(false);
@@ -79,18 +83,8 @@ export default function MarketPage() {
     const visibleStocks = stocks.slice(startIndex, endIndex);
     const symbols = visibleStocks.map((stock) => stock.symbol);
 
-    axios
-      .post(
-        '/api/stock/price/bulk',
-        { symbols: symbols },
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          maxRedirects: 0
-        }
-      )
+    api
+      .post('/stock/price/bulk', { symbols: symbols })
       .then((response) => {
         setStocks((prevStocks) => {
           return prevStocks.map((stock) => ({
@@ -123,20 +117,11 @@ export default function MarketPage() {
       return;
     }
     try {
-      await axios.post(
-        '/api/order/create',
-        {
-          symbol: selectedStock.symbol,
-          numOfStocks: parseInt(quantity),
-          type: type
-        },
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      await api.post('/order/create', {
+        symbol: selectedStock.symbol,
+        numOfStocks: parseInt(quantity),
+        type: type
+      });
       alert('Order placed successfully!');
       window.location.reload();
     } catch (error) {
@@ -165,18 +150,8 @@ export default function MarketPage() {
             onFilteredDataChange={(filteredData) => {
               const symbols = filteredData.map((stock) => stock.symbol);
 
-              axios
-                .post(
-                  '/api/stock/price/bulk',
-                  { symbols: symbols },
-                  {
-                    withCredentials: true,
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    maxRedirects: 0
-                  }
-                )
+              api
+                .post('/stock/price/bulk', { symbols: symbols })
                 .then((response) => {
                   setStocks((prevStocks) => {
                     return prevStocks.map((stock) => ({
