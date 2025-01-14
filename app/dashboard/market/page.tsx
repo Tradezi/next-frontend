@@ -89,7 +89,8 @@ export default function MarketPage() {
         'Content-Type': 'application/json',
         Accept: 'application/json'
       },
-      body: JSON.stringify({ symbols: symbols })
+      body: JSON.stringify({ symbols: symbols }),
+      mode: 'cors'
     })
       .then((response) => {
         if (!response.ok) throw new Error('Failed to fetch stock prices');
@@ -181,7 +182,8 @@ export default function MarketPage() {
                   'Content-Type': 'application/json',
                   Accept: 'application/json'
                 },
-                body: JSON.stringify({ symbols })
+                body: JSON.stringify({ symbols: symbols }),
+                mode: 'cors'
               })
                 .then((response) => response.json())
                 .then((priceData) => {
