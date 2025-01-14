@@ -55,7 +55,7 @@ export default function MarketPage() {
     fetch('/api/stock/metadata', {
       credentials: 'include',
       headers: {
-        Accept: 'application/json'
+        'Content-Type': 'application/json'
       }
     })
       .then((response) => {
@@ -86,8 +86,7 @@ export default function MarketPage() {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ symbols: symbols })
     })
@@ -131,8 +130,7 @@ export default function MarketPage() {
         method: 'POST',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           symbol: selectedStock.symbol,
@@ -177,8 +175,7 @@ export default function MarketPage() {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                  'Content-Type': 'application/json',
-                  Accept: 'application/json'
+                  'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ symbols: symbols })
               })
