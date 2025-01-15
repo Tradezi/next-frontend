@@ -1,5 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import axios from 'axios';
+import { cookies } from 'next/headers';
 import UserAuthForm from '@/components/forms/user-auth-form';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -9,7 +12,35 @@ export const metadata: Metadata = {
   description: 'Authentication for Tradezi.'
 };
 
-export default function AuthenticationPage() {
+async function getUser() {
+  try {
+    // First check cookie
+    const cookieStore = cookies();
+    const userCookie = cookieStore.get('user');
+
+    if (userCookie) {
+      return JSON.parse(userCookie.value);
+    }
+
+    // If no cookie, check API
+    const { data } = await axios.get('/api/user/details', {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return data;
+  } catch (error) {
+    return null;
+  }
+}
+
+export default async function AuthenticationPage() {
+  const user = await getUser();
+
+  if (user) {
+    redirect('/dashboard');
+  }
+
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
