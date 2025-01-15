@@ -5,8 +5,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Authentication',
-  description: 'Authentication forms built using the components.'
+  title: 'Sign In | Tradezi',
+  description: 'Authentication for Tradezi.'
 };
 
 export default function AuthenticationPage() {
