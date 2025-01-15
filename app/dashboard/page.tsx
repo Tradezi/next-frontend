@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 import PageContainer from '@/components/layout/page-container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
@@ -28,7 +29,11 @@ export default function DashboardPage() {
           Accept: 'application/json'
         }
       })
-      .then((response) => setUser(response.data))
+      .then((response) => {
+        setUser(response.data);
+        // Set cookie with user data
+        Cookies.set('user', JSON.stringify(response.data), { expires: 7 }); // expires in 7 days
+      })
       .catch((error) => {
         console.error('Auth error:', error);
         window.location.href = '/';
