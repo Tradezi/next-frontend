@@ -36,6 +36,8 @@ export default function DashboardPage() {
       })
       .catch((error) => {
         console.error('Auth error:', error);
+        // Delete user cookie
+        Cookies.remove('user');
         window.location.href = '/';
       });
   }, []);

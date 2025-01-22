@@ -124,9 +124,9 @@ export const navItems: NavItem[] = [
     label: 'market'
   },
   {
-    title: 'Login',
+    title: 'Logout',
     href: '/',
-    icon: 'login',
-    label: 'login'
+    icon: 'logout',
+    label: 'logout'
   }
 ];
