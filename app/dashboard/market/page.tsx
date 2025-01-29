@@ -58,10 +58,17 @@ const api = axios.create({
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
-    Cookie: document.cookie
+    Accept: 'application/json'
   }
 });
+
+// Add an interceptor to add the cookie header on the client side
+if (typeof window !== 'undefined') {
+  api.interceptors.request.use((config) => {
+    config.headers.Cookie = document.cookie;
+    return config;
+  });
+}
 
 export default function MarketPage() {
   const [stocks, setStocks] = useState<StockMetadata[]>([]);

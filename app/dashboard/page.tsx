@@ -41,7 +41,6 @@ export default function DashboardPage() {
         withCredentials: true,
         headers: {
           Accept: 'application/json',
-          Cookie: document.cookie,
           'Content-Type': 'application/json'
         }
       })
