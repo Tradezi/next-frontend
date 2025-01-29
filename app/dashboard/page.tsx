@@ -102,21 +102,21 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="space-y-4">
+      <div className="space-y-4 p-2 sm:p-2 md:p-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
             {user ? (
-              `Hi ${user.name}, Welcome back 👋`
+              ` Welcome ${user.name}`
             ) : (
-              <Skeleton className="h-8 w-[300px]" />
+              <Skeleton className="h-8 w-[100px]" />
             )}
           </h2>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xs font-medium sm:text-sm">
                 Invested Amount
               </CardTitle>
               <svg
@@ -132,20 +132,20 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {investedAmount !== undefined ? (
-                <div className="text-2xl font-bold">
+                <div className="text-lg font-bold sm:text-xl md:text-2xl">
                   ₹{investedAmount.toFixed(2)}
                 </div>
               ) : (
                 <Skeleton className="h-8 w-[120px]" />
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground md:text-sm">
                 Total amount invested
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xs font-medium sm:text-sm">
                 Current Value
               </CardTitle>
               <svg
@@ -161,20 +161,22 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {currentPrice !== undefined ? (
-                <div className="text-2xl font-bold">
+                <div className="text-lg font-bold sm:text-xl md:text-2xl">
                   ₹{currentPrice.toFixed(2)}
                 </div>
               ) : (
                 <Skeleton className="h-8 w-[120px]" />
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground md:text-sm">
                 Current portfolio value
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Profit/Loss</CardTitle>
+              <CardTitle className="text-xs font-medium sm:text-sm">
+                Profit/Loss
+              </CardTitle>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -192,7 +194,7 @@ export default function DashboardPage() {
               {currentPrice !== undefined && investedAmount !== undefined ? (
                 <>
                   <div
-                    className={`text-2xl font-bold ${
+                    className={`text-lg font-bold sm:text-xl md:text-2xl ${
                       currentPrice >= investedAmount
                         ? 'text-green-600'
                         : 'text-red-600'
@@ -201,7 +203,7 @@ export default function DashboardPage() {
                     {currentPrice >= investedAmount ? `+` : `-`}₹
                     {Math.abs(currentPrice - investedAmount).toFixed(2)}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground md:text-sm">
                     {currentPrice >= investedAmount ? `+` : `-`}
                     {Math.abs(
                       ((currentPrice - investedAmount) / investedAmount) * 100
@@ -219,7 +221,9 @@ export default function DashboardPage() {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Balance</CardTitle>
+              <CardTitle className="text-xs font-medium sm:text-sm">
+                Balance
+              </CardTitle>
               <svg
                 fill="currentColor"
                 viewBox="-96 0 512 512"
@@ -233,26 +237,30 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {user ? (
-                <div className="text-2xl font-bold">
+                <div className="text-lg font-bold sm:text-xl md:text-2xl">
                   ₹{user.balance.toFixed(2)}
                 </div>
               ) : (
                 <Skeleton className="h-8 w-[120px]" />
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground md:text-sm">
                 Current account balance
               </p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-6">
-          <DataTable
-            columns={columns}
-            data={orders}
-            searchKey="stockSymbol"
-            onRowClick={(order) => setSelectedOrder(order)}
-          />
+        <div className="mt-6 overflow-x-auto">
+          <div className="min-w-full px-0 sm:px-2">
+            <div className="max-w-[calc(100vw-2rem)] md:max-w-none">
+              <DataTable
+                columns={columns}
+                data={orders}
+                searchKey="stockSymbol"
+                onRowClick={(order) => setSelectedOrder(order)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -264,26 +272,30 @@ export default function DashboardPage() {
         isOpen={!!selectedOrder}
         onClose={() => setSelectedOrder(null)}
       >
-        <div className="grid gap-2">
-          <div className="grid grid-cols-3 items-center gap-4">
-            <Label htmlFor="symbol">Symbol</Label>
+        <div className="grid gap-4">
+          <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-3">
+            <Label htmlFor="symbol" className="sm:text-right">
+              Symbol
+            </Label>
             <Input
               id="symbol"
-              className="col-span-2"
+              className="col-span-1 sm:col-span-2"
               value={selectedOrder?.stockSymbol || ''}
               disabled
             />
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
-            <Label htmlFor="quantity">Quantity</Label>
+          <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-3">
+            <Label htmlFor="quantity" className="sm:text-right">
+              Quantity
+            </Label>
             <Input
               id="numOfStocks"
               type="number"
-              className="col-span-2"
+              className="col-span-1 sm:col-span-2"
               placeholder="1"
             />
           </div>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex flex-col gap-2 sm:flex-row">
             <Button
               className="flex-1 bg-green-600 hover:bg-green-700"
               onClick={() => placeOrder('BUY')}

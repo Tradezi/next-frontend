@@ -45,7 +45,9 @@ const ITEMS_PER_PAGE = 10;
 
 // Create a base axios instance with common config
 const api = axios.create({
-  baseURL: 'https://backend.tradezi.co.in',
+  baseURL:
+    process.env.NEXT_PUBLIC_FLASK_BACKEND_URL ||
+    'https://backend.tradezi.co.in',
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
