@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 import { Icons } from '@/components/icons';
 import { cn } from '@/lib/utils';
@@ -29,6 +30,15 @@ export function DashboardNav({
   const path = usePathname();
   const { isMinimized } = useSidebar();
 
+  const handleItemClick = (item: NavItem) => {
+    if (setOpen) setOpen(false);
+
+    if (item.title.toLowerCase() === 'logout') {
+      Cookies.remove('user');
+      window.location.href = '/';
+    }
+  };
+
   if (!items?.length) {
     return null;
   }
@@ -51,9 +61,7 @@ export function DashboardNav({
                       path === item.href ? 'bg-accent' : 'transparent',
                       item.disabled && 'cursor-not-allowed opacity-80'
                     )}
-                    onClick={() => {
-                      if (setOpen) setOpen(false);
-                    }}
+                    onClick={() => handleItemClick(item)}
                   >
                     <Icon className={`ml-3 size-5 flex-none`} />
 
