@@ -12,11 +12,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Modal } from '@/components/ui/modal';
+import dynamic from 'next/dynamic';
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface User {
   name: string;
   email: string;
   balance: number;
+}
+
+interface CandleData {
+  x: Date;
+  y: [number, number, number, number]; // [open, high, low, close]
 }
 
 export default function DashboardPage() {
@@ -25,6 +32,8 @@ export default function DashboardPage() {
   const [investedAmount, setInvestedAmount] = useState<number>(0);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [stockHistory, setStockHistory] = useState<CandleData[]>([]);
+  const [isLoadingChart, setIsLoadingChart] = useState(false);
 
   useEffect(() => {
     axios
@@ -73,6 +82,31 @@ export default function DashboardPage() {
         console.error('Order totals error:', error);
       });
   }, []);
+
+  const fetchStockHistory = async (symbol: string) => {
+    setIsLoadingChart(true);
+    try {
+      const response = await axios.get('/api/stock/history', {
+        params: {
+          symbol: symbol,
+          period: '1y'
+        }
+      });
+
+      // Transform the data to match the candlestick format
+      const transformedData = response.data.map((item: any) => ({
+        x: new Date(item.Date).getTime(),
+        y: [item.Open, item.High, item.Low, item.Close]
+      }));
+
+      setStockHistory(transformedData);
+    } catch (error) {
+      console.error('Error fetching stock history:', error);
+      setStockHistory([]);
+    } finally {
+      setIsLoadingChart(false);
+    }
+  };
 
   const placeOrder = async (type: 'BUY' | 'SELL') => {
     const quantity = (
@@ -257,7 +291,12 @@ export default function DashboardPage() {
                 columns={columns}
                 data={orders}
                 searchKey="stockSymbol"
-                onRowClick={(order) => setSelectedOrder(order)}
+                onRowClick={(order) => {
+                  setSelectedOrder(order);
+                  if (order) {
+                    fetchStockHistory(order.stockSymbol);
+                  }
+                }}
               />
             </div>
           </div>
@@ -270,9 +309,101 @@ export default function DashboardPage() {
           2
         )}`}
         isOpen={!!selectedOrder}
-        onClose={() => setSelectedOrder(null)}
+        onClose={() => {
+          setSelectedOrder(null);
+          setStockHistory([]);
+        }}
       >
         <div className="grid gap-4">
+          {stockHistory.length > 0 ? (
+            <div className="mb-4 h-[300px] w-full">
+              <Chart
+                options={{
+                  chart: {
+                    type: 'candlestick',
+                    height: 300,
+                    toolbar: {
+                      show: false
+                    }
+                  },
+                  xaxis: {
+                    type: 'datetime',
+                    labels: {
+                      formatter: function (val) {
+                        return new Date(val).toLocaleDateString();
+                      }
+                    }
+                  },
+                  yaxis: {
+                    tooltip: {
+                      enabled: true
+                    },
+                    labels: {
+                      formatter: function (val) {
+                        if (typeof val === 'number') {
+                          return '₹' + val.toFixed(2);
+                        }
+                        return val;
+                      }
+                    }
+                  },
+                  tooltip: {
+                    custom: function ({ seriesIndex, dataPointIndex, w }) {
+                      const o =
+                        w.globals.seriesCandleO[seriesIndex][dataPointIndex];
+                      const h =
+                        w.globals.seriesCandleH[seriesIndex][dataPointIndex];
+                      const l =
+                        w.globals.seriesCandleL[seriesIndex][dataPointIndex];
+                      const c =
+                        w.globals.seriesCandleC[seriesIndex][dataPointIndex];
+                      const date = new Date(
+                        w.globals.seriesX[seriesIndex][dataPointIndex]
+                      ).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      });
+
+                      return (
+                        '<div class="rounded-lg border bg-background text-foreground shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 p-2 text-sm">' +
+                        '<div class="font-medium border-b dark:border-slate-800 pb-1 mb-1">' +
+                        date +
+                        '</div>' +
+                        '<div class="space-y-0.5">' +
+                        '<div class="text-muted-foreground dark:text-slate-400">Open: <span class="text-foreground dark:text-slate-200">₹' +
+                        o?.toFixed(2) +
+                        '</span></div>' +
+                        '<div class="text-muted-foreground dark:text-slate-400">High: <span class="text-foreground dark:text-slate-200">₹' +
+                        h?.toFixed(2) +
+                        '</span></div>' +
+                        '<div class="text-muted-foreground dark:text-slate-400">Low: <span class="text-foreground dark:text-slate-200">₹' +
+                        l?.toFixed(2) +
+                        '</span></div>' +
+                        '<div class="text-muted-foreground dark:text-slate-400">Close: <span class="text-foreground dark:text-slate-200">₹' +
+                        c?.toFixed(2) +
+                        '</span></div>' +
+                        '</div>' +
+                        '</div>'
+                      );
+                    }
+                  }
+                }}
+                series={[
+                  {
+                    name: 'Price',
+                    data: stockHistory
+                  }
+                ]}
+                type="candlestick"
+                height={300}
+              />
+            </div>
+          ) : isLoadingChart ? (
+            <div className="mb-4 flex h-[300px] w-full items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            </div>
+          ) : null}
           <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-3">
             <Label htmlFor="symbol" className="sm:text-right">
               Symbol
