@@ -57,7 +57,9 @@ const api = axios.create({
     'https://backend.tradezi.co.in',
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    Cookie: document.cookie
   }
 });
 

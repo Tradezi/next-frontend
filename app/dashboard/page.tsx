@@ -40,7 +40,9 @@ export default function DashboardPage() {
       .get('/api/user/details', {
         withCredentials: true,
         headers: {
-          Accept: 'application/json'
+          Accept: 'application/json',
+          Cookie: document.cookie,
+          'Content-Type': 'application/json'
         }
       })
       .then((response) => {
