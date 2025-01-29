@@ -8,6 +8,10 @@ import { DataTable } from '@/components/ui/data-table';
 import { columns, Order } from './columns';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Modal } from '@/components/ui/modal';
 
 interface User {
   name: string;
@@ -20,6 +24,7 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [investedAmount, setInvestedAmount] = useState<number>(0);
   const [currentPrice, setCurrentPrice] = useState<number>(0);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   useEffect(() => {
     axios
@@ -68,6 +73,32 @@ export default function DashboardPage() {
         console.error('Order totals error:', error);
       });
   }, []);
+
+  const placeOrder = async (type: 'BUY' | 'SELL') => {
+    const quantity = (
+      document.getElementById('numOfStocks') as HTMLInputElement
+    ).value;
+    if (!selectedOrder?.stockSymbol || !quantity) {
+      alert('Please enter quantity.');
+      return;
+    }
+    try {
+      await axios.post('/api/order/create', {
+        symbol: selectedOrder.stockSymbol,
+        numOfStocks: parseInt(quantity),
+        type: type
+      });
+      alert('Order placed successfully!');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error placing order:', error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : 'Failed to place order. Please try again.'
+      );
+    }
+  };
 
   return (
     <PageContainer scrollable={true}>
@@ -216,9 +247,58 @@ export default function DashboardPage() {
         </div>
 
         <div className="mt-6">
-          <DataTable columns={columns} data={orders} searchKey="stockSymbol" />
+          <DataTable
+            columns={columns}
+            data={orders}
+            searchKey="stockSymbol"
+            onRowClick={(order) => setSelectedOrder(order)}
+          />
         </div>
       </div>
+
+      <Modal
+        title={`Place an order for ${selectedOrder?.stockSymbol}`}
+        description={`Current Price: ₹${selectedOrder?.currentPrice?.toFixed(
+          2
+        )}`}
+        isOpen={!!selectedOrder}
+        onClose={() => setSelectedOrder(null)}
+      >
+        <div className="grid gap-2">
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label htmlFor="symbol">Symbol</Label>
+            <Input
+              id="symbol"
+              className="col-span-2"
+              value={selectedOrder?.stockSymbol || ''}
+              disabled
+            />
+          </div>
+          <div className="grid grid-cols-3 items-center gap-4">
+            <Label htmlFor="quantity">Quantity</Label>
+            <Input
+              id="numOfStocks"
+              type="number"
+              className="col-span-2"
+              placeholder="1"
+            />
+          </div>
+          <div className="mt-2 flex gap-2">
+            <Button
+              className="flex-1 bg-green-600 hover:bg-green-700"
+              onClick={() => placeOrder('BUY')}
+            >
+              Buy
+            </Button>
+            <Button
+              className="flex-1 bg-red-600 hover:bg-red-700"
+              onClick={() => placeOrder('SELL')}
+            >
+              Sell
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </PageContainer>
   );
 }
