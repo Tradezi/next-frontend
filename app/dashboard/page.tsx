@@ -87,7 +87,14 @@ export default function DashboardPage() {
   const fetchStockHistory = async (symbol: string) => {
     setIsLoadingChart(true);
     try {
-      const response = await axios.get('/api/stock/history', {
+      // Create axios instance with interceptor
+      const api = axios.create();
+      api.interceptors.request.use((config) => {
+        config.headers.Cookie = document.cookie;
+        return config;
+      });
+
+      const response = await api.get('/api/stock/history', {
         params: {
           symbol: symbol,
           period: '1y'
