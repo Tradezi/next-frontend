@@ -26,6 +26,25 @@ interface CandleData {
   y: [number, number, number, number]; // [open, high, low, close]
 }
 
+const api = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_FLASK_BACKEND_URL ||
+    'https://backend.tradezi.co.in',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json'
+  }
+});
+
+// Add an interceptor to add the cookie header on the client side
+if (typeof window !== 'undefined') {
+  api.interceptors.request.use((config) => {
+    config.headers.Cookie = document.cookie;
+    return config;
+  });
+}
+
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -36,14 +55,8 @@ export default function DashboardPage() {
   const [isLoadingChart, setIsLoadingChart] = useState(false);
 
   useEffect(() => {
-    axios
-      .get('/api/user/details', {
-        withCredentials: true,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
+    api
+      .get('/user/details')
       .then((response) => {
         setUser(response.data);
         // Set cookie with user data
@@ -58,13 +71,8 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    axios
-      .get('/api/order/user/total', {
-        withCredentials: true,
-        headers: {
-          Accept: 'application/json'
-        }
-      })
+    api
+      .get('/order/user/total')
       .then((response) => {
         setOrders(response.data);
         const total = response.data.reduce((sum: number, order: Order) => {
@@ -87,14 +95,7 @@ export default function DashboardPage() {
   const fetchStockHistory = async (symbol: string) => {
     setIsLoadingChart(true);
     try {
-      // Create axios instance with interceptor
-      const api = axios.create();
-      api.interceptors.request.use((config) => {
-        config.headers.Cookie = document.cookie;
-        return config;
-      });
-
-      const response = await api.get('/api/stock/history', {
+      const response = await api.get('/stock/history', {
         params: {
           symbol: symbol,
           period: '1y'
@@ -125,7 +126,7 @@ export default function DashboardPage() {
       return;
     }
     try {
-      await axios.post('/api/order/create', {
+      await api.post('/order/create', {
         symbol: selectedOrder.stockSymbol,
         numOfStocks: parseInt(quantity),
         type: type
