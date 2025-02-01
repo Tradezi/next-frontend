@@ -78,3 +78,12 @@
     height: 100dvh;
   }
 }
+
+/* Add this to override default Dialog styles */
+.dialog-overlay {
+  @apply !max-w-none;
+}
+
+[role='dialog'] {
+  @apply !max-w-none;
+}

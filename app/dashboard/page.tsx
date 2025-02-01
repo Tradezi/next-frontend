@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Modal } from '@/components/ui/modal';
 import dynamic from 'next/dynamic';
+import { PlaceOrderModal } from '@/components/place-order-modal';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface User {
@@ -145,7 +146,7 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="space-y-4 p-2 sm:p-2 md:p-8">
+      <div className="space-y-4 p-4 sm:p-2 md:p-8">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
             {user ? (
@@ -312,145 +313,16 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <Modal
-        title={`Place an order for ${selectedOrder?.stockSymbol}`}
-        description={`Current Price: ₹${selectedOrder?.currentPrice?.toFixed(
-          2
-        )}`}
+      <PlaceOrderModal
         isOpen={!!selectedOrder}
         onClose={() => {
           setSelectedOrder(null);
           setStockHistory([]);
         }}
-      >
-        <div className="grid gap-4">
-          {stockHistory.length > 0 ? (
-            <div className="mb-4 h-[300px] w-full">
-              <Chart
-                options={{
-                  chart: {
-                    type: 'candlestick',
-                    height: 300,
-                    toolbar: {
-                      show: false
-                    }
-                  },
-                  xaxis: {
-                    type: 'datetime',
-                    labels: {
-                      formatter: function (val) {
-                        return new Date(val).toLocaleDateString();
-                      }
-                    }
-                  },
-                  yaxis: {
-                    tooltip: {
-                      enabled: true
-                    },
-                    labels: {
-                      formatter: function (val) {
-                        if (typeof val === 'number') {
-                          return '₹' + val.toFixed(2);
-                        }
-                        return val;
-                      }
-                    }
-                  },
-                  tooltip: {
-                    custom: function ({ seriesIndex, dataPointIndex, w }) {
-                      const o =
-                        w.globals.seriesCandleO[seriesIndex][dataPointIndex];
-                      const h =
-                        w.globals.seriesCandleH[seriesIndex][dataPointIndex];
-                      const l =
-                        w.globals.seriesCandleL[seriesIndex][dataPointIndex];
-                      const c =
-                        w.globals.seriesCandleC[seriesIndex][dataPointIndex];
-                      const date = new Date(
-                        w.globals.seriesX[seriesIndex][dataPointIndex]
-                      ).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                      });
-
-                      return (
-                        '<div class="rounded-lg border bg-background text-foreground shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 p-2 text-sm">' +
-                        '<div class="font-medium border-b dark:border-slate-800 pb-1 mb-1">' +
-                        date +
-                        '</div>' +
-                        '<div class="space-y-0.5">' +
-                        '<div class="text-muted-foreground dark:text-slate-400">Open: <span class="text-foreground dark:text-slate-200">₹' +
-                        o?.toFixed(2) +
-                        '</span></div>' +
-                        '<div class="text-muted-foreground dark:text-slate-400">High: <span class="text-foreground dark:text-slate-200">₹' +
-                        h?.toFixed(2) +
-                        '</span></div>' +
-                        '<div class="text-muted-foreground dark:text-slate-400">Low: <span class="text-foreground dark:text-slate-200">₹' +
-                        l?.toFixed(2) +
-                        '</span></div>' +
-                        '<div class="text-muted-foreground dark:text-slate-400">Close: <span class="text-foreground dark:text-slate-200">₹' +
-                        c?.toFixed(2) +
-                        '</span></div>' +
-                        '</div>' +
-                        '</div>'
-                      );
-                    }
-                  }
-                }}
-                series={[
-                  {
-                    name: 'Price',
-                    data: stockHistory
-                  }
-                ]}
-                type="candlestick"
-                height={300}
-              />
-            </div>
-          ) : isLoadingChart ? (
-            <div className="mb-4 flex h-[300px] w-full items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            </div>
-          ) : null}
-          <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-3">
-            <Label htmlFor="symbol" className="sm:text-right">
-              Symbol
-            </Label>
-            <Input
-              id="symbol"
-              className="col-span-1 sm:col-span-2"
-              value={selectedOrder?.stockSymbol || ''}
-              disabled
-            />
-          </div>
-          <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-3">
-            <Label htmlFor="quantity" className="sm:text-right">
-              Quantity
-            </Label>
-            <Input
-              id="numOfStocks"
-              type="number"
-              className="col-span-1 sm:col-span-2"
-              placeholder="1"
-            />
-          </div>
-          <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-            <Button
-              className="flex-1 bg-green-600 hover:bg-green-700"
-              onClick={() => placeOrder('BUY')}
-            >
-              Buy
-            </Button>
-            <Button
-              className="flex-1 bg-red-600 hover:bg-red-700"
-              onClick={() => placeOrder('SELL')}
-            >
-              Sell
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        stockSymbol={selectedOrder?.stockSymbol}
+        currentPrice={selectedOrder?.currentPrice}
+        api={api}
+      />
     </PageContainer>
   );
 }

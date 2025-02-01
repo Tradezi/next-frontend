@@ -10,7 +10,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Modal } from '@/components/ui/modal';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+import { PlaceOrderModal } from '@/components/place-order-modal';
 
 interface StockMetadata {
   symbol: string;
@@ -230,144 +230,16 @@ export default function MarketPage() {
         </div>
       </div>
 
-      <Modal
-        title={`Place an order for ${selectedStock?.symbol}`}
-        description={`Current Price: ₹${selectedStock?.currentPrice?.toFixed(
-          2
-        )}`}
+      <PlaceOrderModal
         isOpen={!!selectedStock}
         onClose={() => {
           setSelectedStock(null);
           setStockHistory([]);
         }}
-      >
-        <div className="grid gap-4">
-          {stockHistory.length > 0 ? (
-            <div className="mb-4 h-[300px] w-full">
-              <Chart
-                options={{
-                  chart: {
-                    type: 'candlestick',
-                    height: 300,
-                    toolbar: {
-                      show: false
-                    }
-                  },
-                  xaxis: {
-                    type: 'datetime',
-                    labels: {
-                      formatter: function (val) {
-                        return new Date(val).toLocaleDateString();
-                      }
-                    }
-                  },
-                  yaxis: {
-                    tooltip: {
-                      enabled: true
-                    },
-                    labels: {
-                      formatter: function (val) {
-                        if (typeof val === 'number') {
-                          return '₹' + val.toFixed(2);
-                        }
-                        return val;
-                      }
-                    }
-                  },
-                  tooltip: {
-                    custom: function ({ seriesIndex, dataPointIndex, w }) {
-                      const o =
-                        w.globals.seriesCandleO[seriesIndex][dataPointIndex];
-                      const h =
-                        w.globals.seriesCandleH[seriesIndex][dataPointIndex];
-                      const l =
-                        w.globals.seriesCandleL[seriesIndex][dataPointIndex];
-                      const c =
-                        w.globals.seriesCandleC[seriesIndex][dataPointIndex];
-                      const date = new Date(
-                        w.globals.seriesX[seriesIndex][dataPointIndex]
-                      ).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                      });
-
-                      return (
-                        '<div class="rounded-lg border bg-background text-foreground shadow-md dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100 p-2 text-sm">' +
-                        '<div class="font-medium border-b dark:border-slate-800 pb-1 mb-1">' +
-                        date +
-                        '</div>' +
-                        '<div class="space-y-0.5">' +
-                        '<div class="text-muted-foreground dark:text-slate-400">Open: <span class="text-foreground dark:text-slate-200">₹' +
-                        o?.toFixed(2) +
-                        '</span></div>' +
-                        '<div class="text-muted-foreground dark:text-slate-400">High: <span class="text-foreground dark:text-slate-200">₹' +
-                        h?.toFixed(2) +
-                        '</span></div>' +
-                        '<div class="text-muted-foreground dark:text-slate-400">Low: <span class="text-foreground dark:text-slate-200">₹' +
-                        l?.toFixed(2) +
-                        '</span></div>' +
-                        '<div class="text-muted-foreground dark:text-slate-400">Close: <span class="text-foreground dark:text-slate-200">₹' +
-                        c?.toFixed(2) +
-                        '</span></div>' +
-                        '</div>' +
-                        '</div>'
-                      );
-                    }
-                  }
-                }}
-                series={[
-                  {
-                    name: 'Price',
-                    data: stockHistory
-                  }
-                ]}
-                type="candlestick"
-                height={300}
-              />
-            </div>
-          ) : isLoadingChart ? (
-            <div className="mb-4 flex h-[300px] w-full items-center justify-center">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-            </div>
-          ) : null}
-
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="symbol">Symbol</Label>
-              <Input
-                id="symbol"
-                className="col-span-2"
-                value={selectedStock?.symbol || ''}
-                disabled
-              />
-            </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="quantity">Quantity</Label>
-              <Input
-                id="numOfStocks"
-                type="number"
-                className="col-span-2"
-                placeholder="1"
-              />
-            </div>
-            <div className="mt-2 flex gap-2">
-              <Button
-                className="flex-1 bg-green-600 hover:bg-green-700"
-                onClick={() => placeOrder('BUY')}
-              >
-                Buy
-              </Button>
-              <Button
-                className="flex-1 bg-red-600 hover:bg-red-700"
-                onClick={() => placeOrder('SELL')}
-              >
-                Sell
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+        stockSymbol={selectedStock?.symbol}
+        currentPrice={selectedStock?.currentPrice}
+        api={api}
+      />
     </PageContainer>
   );
 }
