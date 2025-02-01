@@ -265,7 +265,6 @@ export function PlaceOrderModal({
                       tooltip: {
                         enabled: true
                       },
-                      floating: true,
                       labels: {
                         formatter: function (val) {
                           if (typeof val === 'number') {
@@ -273,6 +272,14 @@ export function PlaceOrderModal({
                           }
                           return val;
                         }
+                      },
+                      forceNiceScale: true,
+                      decimalsInFloat: 2,
+                      axisBorder: {
+                        show: true
+                      },
+                      axisTicks: {
+                        show: true
                       }
                     },
                     tooltip:
