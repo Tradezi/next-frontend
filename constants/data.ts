@@ -124,6 +124,12 @@ export const navItems: NavItem[] = [
     label: 'market'
   },
   {
+    title: 'About Us',
+    href: '/dashboard/about',
+    icon: 'about',
+    label: 'about'
+  },
+  {
     title: 'Logout',
     href: '/',
     icon: 'logout',

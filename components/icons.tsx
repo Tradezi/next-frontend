@@ -30,12 +30,14 @@ import {
   User2Icon,
   UserX2Icon,
   X,
-  TrendingUpIcon
+  TrendingUpIcon,
+  BookOpenIcon
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
 
 export const Icons = {
+  about: BookOpenIcon,
   dashboard: LayoutDashboardIcon,
   logo: Command,
   login: LogIn,
