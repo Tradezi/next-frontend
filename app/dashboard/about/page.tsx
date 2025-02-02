@@ -32,9 +32,9 @@ export default function AboutPage() {
         <section>
           <h2 className="mb-4 text-2xl font-semibold">Our Story</h2>
           <p className="text-muted-foreground">
-            Founded with a vision to transform how businesses operate, we've
-            grown into a trusted partner for organizations seeking to optimize
-            their operations and achieve their goals.
+            Founded with a vision to transform how businesses operate,
+            we&apos;ve grown into a trusted partner for organizations seeking to
+            optimize their operations and achieve their goals.
           </p>
         </section>
       </div>
