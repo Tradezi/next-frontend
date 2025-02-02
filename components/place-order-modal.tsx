@@ -145,9 +145,9 @@ export function PlaceOrderModal({
       onClose={onClose}
       className="h-full max-w-full"
     >
-      <div className="grid h-[calc(100%-1rem)] grid-cols-[1fr_2fr] gap-6">
+      <div className="grid h-[calc(100%-1rem)] grid-cols-[300px_1fr] gap-6">
         {/* Order Form Section - Left Side */}
-        <div className="flex max-w-sm flex-col justify-center gap-6">
+        <div className="flex flex-col justify-center gap-6 rounded-lg border border-slate-200 bg-slate-100 p-6 dark:border-slate-800 dark:bg-slate-950">
           <div className="grid gap-4">
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="symbol">Symbol</Label>
@@ -186,7 +186,7 @@ export function PlaceOrderModal({
         </div>
 
         {/* Chart Section - Right Side */}
-        <div className="flex h-[calc(100vh-12rem)] min-h-0 flex-col">
+        <div className="flex h-[calc(100vh-12rem)] min-h-0 flex-col rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950">
           {/* Chart Controls */}
           <div className="mb-4 flex items-center justify-between gap-4">
             {/* Period Selection Buttons */}
