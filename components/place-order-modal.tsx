@@ -73,6 +73,9 @@ export function PlaceOrderModal({
     'max'
   ];
 
+  const isDarkMode = document.documentElement.classList.contains('dark');
+  const axisColor = isDarkMode ? '#94a3b8' : '#475569'; // slate-400 for dark, slate-600 for light
+
   useEffect(() => {
     if (stockSymbol && isOpen) {
       fetchStockHistory(stockSymbol);
@@ -147,7 +150,7 @@ export function PlaceOrderModal({
     >
       <div className="grid h-[calc(100%-1rem)] grid-cols-[300px_1fr] gap-6">
         {/* Order Form Section - Left Side */}
-        <div className="flex flex-col justify-center gap-6 rounded-lg border border-slate-200 bg-slate-100 p-6 dark:border-slate-800 dark:bg-slate-950">
+        <div className="flex flex-col justify-center gap-6 rounded-lg border border-slate-200 p-6 dark:border-slate-800">
           <div className="grid gap-4">
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="symbol">Symbol</Label>
@@ -186,7 +189,7 @@ export function PlaceOrderModal({
         </div>
 
         {/* Chart Section - Right Side */}
-        <div className="flex h-[calc(100vh-12rem)] min-h-0 flex-col rounded-lg border border-slate-200 bg-slate-50 p-6 dark:border-slate-800 dark:bg-slate-950">
+        <div className="flex h-[calc(100vh-12rem)] min-h-0 flex-col rounded-lg border border-slate-200 p-6 dark:border-slate-800 ">
           {/* Chart Controls */}
           <div className="mb-4 flex items-center justify-between gap-4">
             {/* Period Selection Buttons */}
@@ -258,7 +261,16 @@ export function PlaceOrderModal({
                       labels: {
                         formatter: function (val) {
                           return new Date(val).toLocaleDateString();
+                        },
+                        style: {
+                          colors: axisColor
                         }
+                      },
+                      axisBorder: {
+                        color: axisColor
+                      },
+                      axisTicks: {
+                        color: axisColor
                       }
                     },
                     yaxis: {
@@ -271,15 +283,20 @@ export function PlaceOrderModal({
                             return '₹' + val.toFixed(2);
                           }
                           return val;
+                        },
+                        style: {
+                          colors: [axisColor]
                         }
                       },
                       forceNiceScale: true,
                       decimalsInFloat: 2,
                       axisBorder: {
-                        show: true
+                        show: true,
+                        color: axisColor
                       },
                       axisTicks: {
-                        show: true
+                        show: true,
+                        color: axisColor
                       }
                     },
                     tooltip:
