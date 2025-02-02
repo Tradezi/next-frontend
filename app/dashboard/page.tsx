@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Modal } from '@/components/ui/modal';
 import dynamic from 'next/dynamic';
 import { PlaceOrderModal } from '@/components/place-order-modal';
+import { formatIndianNumber } from '@/lib/utils';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface User {
@@ -177,7 +178,7 @@ export default function DashboardPage() {
             <CardContent>
               {investedAmount !== undefined ? (
                 <div className="text-lg font-bold sm:text-xl md:text-2xl">
-                  ₹{investedAmount.toFixed(2)}
+                  ₹{formatIndianNumber(investedAmount)}
                 </div>
               ) : (
                 <Skeleton className="h-8 w-[120px]" />
@@ -206,7 +207,7 @@ export default function DashboardPage() {
             <CardContent>
               {currentPrice !== undefined ? (
                 <div className="text-lg font-bold sm:text-xl md:text-2xl">
-                  ₹{currentPrice.toFixed(2)}
+                  ₹{formatIndianNumber(currentPrice)}
                 </div>
               ) : (
                 <Skeleton className="h-8 w-[120px]" />
@@ -245,7 +246,9 @@ export default function DashboardPage() {
                     }`}
                   >
                     {currentPrice >= investedAmount ? `+` : `-`}₹
-                    {Math.abs(currentPrice - investedAmount).toFixed(2)}
+                    {formatIndianNumber(
+                      Math.abs(currentPrice - investedAmount)
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground md:text-sm">
                     {currentPrice >= investedAmount ? `+` : `-`}
@@ -282,7 +285,7 @@ export default function DashboardPage() {
             <CardContent>
               {user ? (
                 <div className="text-lg font-bold sm:text-xl md:text-2xl">
-                  ₹{user.balance.toFixed(2)}
+                  ₹{formatIndianNumber(user.balance)}
                 </div>
               ) : (
                 <Skeleton className="h-8 w-[120px]" />
