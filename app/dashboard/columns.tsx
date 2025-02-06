@@ -8,6 +8,7 @@ export interface Order {
   userId: string;
   stockPrice: number;
   stockSymbol: string;
+  companyName: string;
   numOfStocks: number;
   currentPrice: number;
   orderType: string;

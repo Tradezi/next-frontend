@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Modal } from '@/components/ui/modal';
 import dynamic from 'next/dynamic';
-import { PlaceOrderModal } from '@/components/place-order-modal';
+import { StockDetailsModal } from '@/components/stock-details-modal';
 import { formatIndianNumber } from '@/lib/utils';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -316,7 +316,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <PlaceOrderModal
+      <StockDetailsModal
         isOpen={!!selectedOrder}
         onClose={() => {
           setSelectedOrder(null);
@@ -324,6 +324,7 @@ export default function DashboardPage() {
         }}
         stockSymbol={selectedOrder?.stockSymbol}
         currentPrice={selectedOrder?.currentPrice}
+        companyName={selectedOrder?.companyName}
         api={api}
       />
     </PageContainer>

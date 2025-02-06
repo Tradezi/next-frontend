@@ -10,7 +10,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Modal } from '@/components/ui/modal';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import { PlaceOrderModal } from '@/components/place-order-modal';
+import { StockDetailsModal } from '@/components/stock-details-modal';
 
 interface StockMetadata {
   symbol: string;
@@ -230,7 +230,7 @@ export default function MarketPage() {
         </div>
       </div>
 
-      <PlaceOrderModal
+      <StockDetailsModal
         isOpen={!!selectedStock}
         onClose={() => {
           setSelectedStock(null);
@@ -238,6 +238,7 @@ export default function MarketPage() {
         }}
         stockSymbol={selectedStock?.symbol}
         currentPrice={selectedStock?.currentPrice}
+        companyName={selectedStock?.comapny_name}
         api={api}
       />
     </PageContainer>

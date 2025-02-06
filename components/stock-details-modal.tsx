@@ -14,10 +14,11 @@ interface CandleData {
   y: [number, number, number, number]; // [open, high, low, close]
 }
 
-interface PlaceOrderModalProps {
+interface StockDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   stockSymbol?: string;
+  companyName?: string;
   currentPrice?: number;
   api: any;
 }
@@ -48,13 +49,14 @@ const periodDisplayMap: Record<PeriodOption, string> = {
   max: 'MAX'
 };
 
-export function PlaceOrderModal({
+export function StockDetailsModal({
   isOpen,
   onClose,
   stockSymbol,
+  companyName,
   currentPrice,
   api
-}: PlaceOrderModalProps) {
+}: StockDetailsModalProps) {
   const [stockHistory, setStockHistory] = useState<CandleData[]>([]);
   const [isLoadingChart, setIsLoadingChart] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodOption>('1mo');
@@ -142,15 +144,16 @@ export function PlaceOrderModal({
 
   return (
     <Modal
-      title={`Place an order for ${stockSymbol}`}
-      description={`Current Price: ₹${currentPrice?.toFixed(2)}`}
+      title={stockSymbol}
+      description={companyName}
       isOpen={isOpen}
       onClose={onClose}
       className="h-full max-w-full"
     >
-      <div className="grid h-[calc(100%-1rem)] grid-cols-[300px_1fr] gap-6">
+      <div className="-mt-4 grid h-[calc(100%-1rem)] grid-cols-[300px_1fr] gap-6">
         {/* Order Form Section - Left Side */}
-        <div className="flex flex-col justify-center gap-6 rounded-lg border border-slate-200 p-6 dark:border-slate-800">
+        <div className="flex flex-col justify-start gap-6 rounded-lg border border-slate-200 p-6 dark:border-slate-800">
+          <b className="text-xl font-semibold">Place an order</b>
           <div className="grid gap-4">
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="symbol">Symbol</Label>
@@ -162,13 +165,74 @@ export function PlaceOrderModal({
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="quantity">Quantity</Label>
+              <Label htmlFor="price">Price</Label>
               <Input
-                id="numOfStocks"
-                type="number"
+                id="price"
                 className="col-span-2"
-                placeholder="1"
+                value={currentPrice ? `₹${currentPrice}` : ''}
+                disabled
               />
+            </div>
+            <div className="grid grid-cols-3 items-center gap-4">
+              <Label htmlFor="quantity">Quantity</Label>
+              <div className="relative col-span-2">
+                <Input
+                  id="numOfStocks"
+                  type="number"
+                  className="pl-8 pr-8 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  placeholder="1"
+                  min="1"
+                />
+                <button
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => {
+                    const input = document.getElementById(
+                      'numOfStocks'
+                    ) as HTMLInputElement;
+                    const currentValue = Number(input.value) || 0;
+                    input.value = String(Math.max(1, currentValue - 1));
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+                <button
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  onClick={() => {
+                    const input = document.getElementById(
+                      'numOfStocks'
+                    ) as HTMLInputElement;
+                    const currentValue = Number(input.value) || 0;
+                    input.value = String(currentValue + 1);
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
