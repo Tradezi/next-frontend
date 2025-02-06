@@ -61,6 +61,8 @@ export function StockDetailsModal({
   const [isLoadingChart, setIsLoadingChart] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<PeriodOption>('1mo');
   const [chartType, setChartType] = useState<ChartType>('candlestick');
+  const [show50MA, setShow50MA] = useState(false);
+  const [show200MA, setShow200MA] = useState(false);
 
   const periods: PeriodOption[] = [
     '1d',
@@ -141,6 +143,20 @@ export function StockDetailsModal({
     x: item.x,
     y: item.y[3] // Using closing price for line chart
   }));
+
+  // Add this function to calculate moving averages
+  const calculateMA = (data: CandleData[], period: number) => {
+    return data.map((item, index) => {
+      if (index < period - 1) return { x: item.x, y: null };
+
+      const slice = data.slice(index - period + 1, index + 1);
+      const sum = slice.reduce((acc, curr) => acc + curr.y[3], 0);
+      return {
+        x: item.x,
+        y: sum / period
+      };
+    });
+  };
 
   return (
     <Modal
@@ -257,18 +273,42 @@ export function StockDetailsModal({
           {/* Chart Controls */}
           <div className="mb-4 flex items-center justify-between gap-4">
             {/* Period Selection Buttons */}
-            <div className="flex flex-wrap gap-1">
-              {periods.map((period) => (
-                <Button
-                  key={period}
-                  variant={selectedPeriod === period ? 'default' : 'outline'}
-                  className="px-2 py-1 text-xs"
-                  onClick={() => setSelectedPeriod(period)}
-                  disabled={isLoadingChart}
-                >
-                  {periodDisplayMap[period]}
-                </Button>
-              ))}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap gap-1">
+                {periods.map((period) => (
+                  <Button
+                    key={period}
+                    variant={selectedPeriod === period ? 'default' : 'outline'}
+                    className="px-2 py-1 text-xs"
+                    onClick={() => setSelectedPeriod(period)}
+                    disabled={isLoadingChart}
+                  >
+                    {periodDisplayMap[period]}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Add Moving Average Controls */}
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={show50MA}
+                    onChange={(e) => setShow50MA(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm">50 MA</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={show200MA}
+                    onChange={(e) => setShow200MA(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300"
+                  />
+                  <span className="text-sm">200 MA</span>
+                </label>
+              </div>
             </div>
 
             {/* Chart Type Selection */}
@@ -318,6 +358,16 @@ export function StockDetailsModal({
                         right: 0,
                         bottom: 0,
                         left: 0
+                      },
+                      xaxis: {
+                        lines: {
+                          show: false
+                        }
+                      },
+                      yaxis: {
+                        lines: {
+                          show: true
+                        }
                       }
                     },
                     xaxis: {
@@ -328,13 +378,16 @@ export function StockDetailsModal({
                         },
                         style: {
                           colors: axisColor
-                        }
+                        },
+                        offsetX: 0
                       },
                       axisBorder: {
-                        color: axisColor
+                        color: axisColor,
+                        offsetX: 0
                       },
                       axisTicks: {
-                        color: axisColor
+                        color: axisColor,
+                        offsetX: 0
                       }
                     },
                     yaxis: {
@@ -350,17 +403,20 @@ export function StockDetailsModal({
                         },
                         style: {
                           colors: [axisColor]
-                        }
+                        },
+                        offsetX: -15
                       },
                       forceNiceScale: true,
                       decimalsInFloat: 2,
                       axisBorder: {
                         show: true,
-                        color: axisColor
+                        color: axisColor,
+                        offsetX: 0
                       },
                       axisTicks: {
                         show: true,
-                        color: axisColor
+                        color: axisColor,
+                        offsetX: 0
                       }
                     },
                     tooltip:
@@ -459,8 +515,28 @@ export function StockDetailsModal({
                           ? stockHistory
                           : lineChartData,
                       type: chartType,
-                      color: chartType !== 'candlestick' ? '#2563eb' : undefined // blue-600
-                    }
+                      color: chartType !== 'candlestick' ? '#2563eb' : undefined
+                    },
+                    ...(show50MA
+                      ? [
+                          {
+                            name: '50 MA',
+                            data: calculateMA(stockHistory, 50),
+                            type: 'line',
+                            color: '#22c55e' // green-500
+                          }
+                        ]
+                      : []),
+                    ...(show200MA
+                      ? [
+                          {
+                            name: '200 MA',
+                            data: calculateMA(stockHistory, 200),
+                            type: 'line',
+                            color: '#ef4444' // red-500
+                          }
+                        ]
+                      : [])
                   ]}
                   type={chartType}
                   height="100%"
