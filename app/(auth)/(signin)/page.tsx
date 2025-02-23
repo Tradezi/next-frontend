@@ -54,11 +54,11 @@ export default async function AuthenticationPage() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="mr-2 h-8 w-8 sm:h-10 sm:w-10 lg:h-10 lg:w-10"
+              className="mr-2 h-8 w-8 sm:h-10 sm:w-10 lg:h-8 lg:w-8"
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            <span className="text-2xl sm:text-3xl lg:text-4xl">Tradezi</span>
+            <span className="text-2xl sm:text-3xl lg:text-3xl">Tradezi</span>
           </div>
         </div>
         <div className="relative z-20 flex flex-1 flex-col lg:items-start lg:justify-center">
