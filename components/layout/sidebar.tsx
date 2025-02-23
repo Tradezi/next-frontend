@@ -21,15 +21,15 @@ export default function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        `relative  hidden h-screen flex-none border-r bg-card transition-[width] duration-500 md:block`,
-        !isMinimized ? 'w-72' : 'w-[72px]',
+        `relative hidden h-screen flex-none border-r bg-card transition-[width] duration-500 md:block`,
+        !isMinimized ? 'w-72' : 'w-16',
         className
       )}
     >
-      <div className="hidden p-5 pt-10 lg:block">
+      <div className="flex h-16 items-center px-4 pt-4">
         <Link
           href={'/'}
-          className="relative z-20 flex items-center text-lg font-medium"
+          className="relative z-20 flex items-center overflow-hidden text-lg font-medium"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -39,11 +39,13 @@ export default function Sidebar({ className }: SidebarProps) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
+            className={cn('h-6 w-6 shrink-0', isMinimized ? 'mx-0' : 'mr-0')}
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          <p>Tradezi</p>
+          <span className="ml-2 overflow-hidden whitespace-nowrap">
+            Tradezi
+          </span>
         </Link>
       </div>
       <ChevronLeft
@@ -54,8 +56,13 @@ export default function Sidebar({ className }: SidebarProps) {
         onClick={handleToggle}
       />
       <div className="space-y-4 py-4">
-        <div className="px-3 py-2">
-          <div className="mt-3 space-y-1">
+        <div
+          className={cn(
+            'px-3 py-2',
+            isMinimized && 'flex flex-col items-center px-2'
+          )}
+        >
+          <div className={cn('mt-3 space-y-1', isMinimized && 'w-full')}>
             <DashboardNav items={navItems} />
           </div>
         </div>

@@ -46,7 +46,12 @@ export function DashboardNav({
   console.log('isActive', isMobileNav, isMinimized);
 
   return (
-    <nav className="grid items-start gap-2">
+    <nav
+      className={cn(
+        'grid items-start gap-2 transition-all duration-500',
+        isMinimized && 'px-2'
+      )}
+    >
       <TooltipProvider>
         {items.map((item, index) => {
           const Icon = Icons[item.icon || 'arrowRight'];
@@ -57,19 +62,29 @@ export function DashboardNav({
                   <Link
                     href={item.disabled ? '/' : item.href}
                     className={cn(
-                      'flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                      'flex items-center rounded-md py-2 text-sm font-medium transition-all duration-500 hover:bg-accent hover:text-accent-foreground',
                       path === item.href ? 'bg-accent' : 'transparent',
-                      item.disabled && 'cursor-not-allowed opacity-80'
+                      item.disabled && 'cursor-not-allowed opacity-80',
+                      !isMinimized ? 'px-2' : 'w-full'
                     )}
                     onClick={() => handleItemClick(item)}
                   >
-                    <Icon className={`ml-3 size-5 flex-none`} />
-
-                    {isMobileNav || (!isMinimized && !isMobileNav) ? (
-                      <span className="mr-2 truncate">{item.title}</span>
-                    ) : (
-                      ''
-                    )}
+                    <div
+                      className={cn(
+                        'flex h-5 w-full items-center',
+                        isMinimized && 'justify-center'
+                      )}
+                    >
+                      <Icon className="size-5 flex-none" />
+                      <span
+                        className={cn(
+                          'ml-2 overflow-hidden whitespace-nowrap',
+                          isMinimized && 'hidden'
+                        )}
+                      >
+                        {item.title}
+                      </span>
+                    </div>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent
