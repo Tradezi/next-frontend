@@ -43,7 +43,7 @@ export default async function AuthenticationPage() {
 
   return (
     <div className="relative flex min-h-screen flex-col lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
-      <div className="relative flex h-full w-full flex-col text-white lg:h-full dark:border-r">
+      <div className="relative flex h-[50vh] w-full flex-col bg-zinc-900 text-white lg:h-full dark:border-r">
         <div className="relative z-20 flex h-[15vh] w-full items-center justify-center px-4 pt-8 sm:pt-10 lg:h-auto lg:items-start lg:justify-start lg:p-10">
           <div className="flex items-center text-lg font-medium lg:mt-8">
             <svg
@@ -79,11 +79,7 @@ export default async function AuthenticationPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col lg:mt-[140px] lg:flex lg:h-[calc(100vh-140px)]">
-        <div className="w-full px-6 sm:px-8 lg:hidden">
-          <hr className="border-t border-zinc-600" />
-        </div>
-
+      <div className="flex h-[50vh] flex-col lg:mt-[140px] lg:flex lg:h-[calc(100vh-140px)]">
         <div className="flex flex-1 items-center px-4 py-12 sm:px-8 sm:py-16 lg:flex lg:items-center lg:justify-center lg:p-12 ">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:max-w-[400px] lg:max-w-[450px]">
             <div className="flex flex-col space-y-2 text-center">

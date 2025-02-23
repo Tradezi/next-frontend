@@ -119,13 +119,13 @@ export const navItems: NavItem[] = [
   },
   {
     title: 'Stock Market',
-    href: '/dashboard/market',
+    href: '/market',
     icon: 'trending',
     label: 'market'
   },
   {
     title: 'About Us',
-    href: '/dashboard/about',
+    href: '/about',
     icon: 'about',
     label: 'about'
   },
