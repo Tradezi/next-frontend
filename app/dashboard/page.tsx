@@ -148,7 +148,7 @@ export default function DashboardPage() {
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
-        <div className="flex items-center justify-between px-4 md:px-0">
+        <div className="flex items-center justify-between px-4 md:px-2">
           <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
             {user ? (
               ` Welcome ${user.name}`
@@ -158,7 +158,7 @@ export default function DashboardPage() {
           </h2>
         </div>
 
-        <div className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-0 lg:grid-cols-4">
+        <div className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-2 lg:grid-cols-4">
           <Card className="overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-medium sm:text-sm">
@@ -298,7 +298,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="mt-6 overflow-x-auto">
-          <div className="min-w-full px-0 sm:px-2">
+          <div className="min-w-full px-4 sm:px-2">
             <div className="max-w-[calc(100vw-2rem)] md:max-w-none">
               <DataTable
                 columns={columns}
