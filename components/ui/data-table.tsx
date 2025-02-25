@@ -85,99 +85,114 @@ export function DataTable<TData, TValue>({
   }, [globalFilter]);
 
   return (
-    <>
+    <div className="w-full space-y-4">
       <Input
-        placeholder={`Search ${searchKey}...`}
+        placeholder={`Search ${searchKey
+          ?.replace(/([A-Z])/g, ' $1')
+          .trim()
+          .toLowerCase()}...`}
         value={globalFilter}
         onChange={(event) => setGlobalFilter(event.target.value)}
-        className="mb-4 w-full"
+        className="mb-2 w-full"
       />
       <ScrollArea
         className={`rounded-md border ${
           table.getRowModel().rows.length <= 5
             ? 'h-fit max-h-[300px]'
-            : 'h-[calc(80vh-220px)] md:h-[calc(80dvh-200px)]'
+            : 'h-[calc(60vh-180px)] sm:h-[calc(70vh-200px)] md:h-[calc(80vh-200px)]'
         }`}
       >
-        <Table className="relative">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => onRowClick?.(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+        <div className="w-full overflow-auto">
+          <Table className="relative min-w-full">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="whitespace-nowrap">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => onRowClick?.(row.original)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="py-2 sm:py-4">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
       {pagination && (
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => pagination.onPageChange(pagination.currentPage - 1)}
-            disabled={pagination.currentPage === 0}
-          >
-            Previous
-          </Button>
+        <div className="flex flex-col-reverse items-center justify-between gap-2 py-2 sm:flex-row">
           <div className="text-sm text-muted-foreground">
             Page {pagination.currentPage + 1} of{' '}
             {Math.ceil(filteredData.length / pagination.pageSize)}
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => pagination.onPageChange(pagination.currentPage + 1)}
-            disabled={
-              pagination.currentPage ===
-              Math.ceil(filteredData.length / pagination.pageSize) - 1
-            }
-          >
-            Next
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                pagination.onPageChange(pagination.currentPage - 1)
+              }
+              disabled={pagination.currentPage === 0}
+              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-4"
+            >
+              <span className="sr-only sm:not-sr-only">Previous</span>
+              <span className="sm:hidden">←</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                pagination.onPageChange(pagination.currentPage + 1)
+              }
+              disabled={
+                pagination.currentPage ===
+                Math.ceil(filteredData.length / pagination.pageSize) - 1
+              }
+              className="h-8 w-8 p-0 sm:h-9 sm:w-auto sm:px-4"
+            >
+              <span className="sr-only sm:not-sr-only">Next</span>
+              <span className="sm:hidden">→</span>
+            </Button>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
