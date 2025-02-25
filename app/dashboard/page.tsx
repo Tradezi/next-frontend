@@ -147,8 +147,8 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="space-y-4 p-4 sm:p-2 md:p-8">
-        <div className="flex items-center justify-between">
+      <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
+        <div className="flex items-center justify-between px-4 md:px-0">
           <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
             {user ? (
               ` Welcome ${user.name}`
@@ -158,8 +158,8 @@ export default function DashboardPage() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
+        <div className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-0 lg:grid-cols-4">
+          <Card className="overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-medium sm:text-sm">
                 Invested Amount
@@ -177,7 +177,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {investedAmount !== undefined ? (
-                <div className="text-lg font-bold sm:text-xl md:text-2xl">
+                <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
                   ₹{formatIndianNumber(investedAmount)}
                 </div>
               ) : (
@@ -188,7 +188,7 @@ export default function DashboardPage() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-medium sm:text-sm">
                 Current Value
@@ -206,7 +206,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {currentPrice !== undefined ? (
-                <div className="text-lg font-bold sm:text-xl md:text-2xl">
+                <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
                   ₹{formatIndianNumber(currentPrice)}
                 </div>
               ) : (
@@ -217,7 +217,7 @@ export default function DashboardPage() {
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-medium sm:text-sm">
                 Profit/Loss
@@ -239,7 +239,7 @@ export default function DashboardPage() {
               {currentPrice !== undefined && investedAmount !== undefined ? (
                 <>
                   <div
-                    className={`text-lg font-bold sm:text-xl md:text-2xl ${
+                    className={`truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl ${
                       currentPrice >= investedAmount
                         ? 'text-green-600'
                         : 'text-red-600'
@@ -266,7 +266,7 @@ export default function DashboardPage() {
               )}
             </CardContent>
           </Card>
-          <Card>
+          <Card className="overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-xs font-medium sm:text-sm">
                 Balance
@@ -284,7 +284,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               {user ? (
-                <div className="text-lg font-bold sm:text-xl md:text-2xl">
+                <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
                   ₹{formatIndianNumber(user.balance)}
                 </div>
               ) : (
