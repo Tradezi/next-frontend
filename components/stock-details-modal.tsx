@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { Modal } from '@/components/ui/modal';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ChevronDown, ChevronUp, X } from 'lucide-react';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface CandleData {
@@ -90,6 +91,18 @@ export function StockDetailsModal({
   const [ma200Data, setMA200Data] = useState<{ x: number; y: number }[]>([]);
   const [stockMetrics, setStockMetrics] = useState<StockMetrics | null>(null);
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
+  const [showMetricsPanel, setShowMetricsPanel] = useState(false);
+  const [showOrderPanel, setShowOrderPanel] = useState(false);
+  const [metricsPopupPosition, setMetricsPopupPosition] = useState({
+    top: 0,
+    left: 0
+  });
+  const [orderPopupPosition, setOrderPopupPosition] = useState({
+    top: 0,
+    left: 0
+  });
+  const metricsButtonRef = useRef<HTMLButtonElement>(null);
+  const orderButtonRef = useRef<HTMLButtonElement>(null);
 
   const periods: PeriodOption[] = [
     '5d',
@@ -221,7 +234,7 @@ export function StockDetailsModal({
   }));
 
   const MetricsSkeleton = () => (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Skeleton className="mb-2 h-4 w-20" />
@@ -255,138 +268,223 @@ export function StockDetailsModal({
     </div>
   );
 
+  // Update the popup positioning function to center the popups
+  const positionPopup = () => {
+    // No need to calculate positions anymore
+    return { top: 0, left: 0 };
+  };
+
   return (
     <Modal
-      title={stockSymbol}
-      description={companyName}
+      title=""
+      description=""
       isOpen={isOpen}
       onClose={onClose}
       className="h-full max-w-full"
     >
-      <div className="flex h-[calc(100vh-8rem)] flex-col gap-4 pb-4">
-        {/* Metrics Panel */}
-        <div className="rounded-lg border border-slate-200 p-4 dark:border-slate-800">
-          {isLoadingMetrics ? (
-            <MetricsSkeleton />
-          ) : stockMetrics ? (
-            <div className="grid grid-cols-3 gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                {stockMetrics.marketCap && (
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      Market Cap
-                    </div>
-                    <div className="font-medium">
-                      ₹{(stockMetrics.marketCap / 10000000).toFixed(2)}Cr
-                    </div>
-                  </div>
-                )}
-                {stockMetrics.PE && (
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      P/E Ratio
-                    </div>
-                    <div className="font-medium">
-                      {stockMetrics.PE.toFixed(2)}
-                    </div>
-                  </div>
-                )}
-              </div>
+      <div className="mb-4">
+        <h2 className="text-left text-lg font-semibold sm:text-xl md:text-2xl">
+          {stockSymbol}
+        </h2>
+        <p className="text-left text-xs text-muted-foreground sm:text-sm">
+          {companyName || (stockSymbol ? `${stockSymbol}` : '')}
+        </p>
+      </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                {stockMetrics.bookValue && (
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      Book Value
-                    </div>
-                    <div className="font-medium">
-                      ₹{stockMetrics.bookValue.toFixed(2)}
-                    </div>
-                  </div>
-                )}
-                {stockMetrics.dividendYield && (
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      Dividend Yield
-                    </div>
-                    <div className="font-medium">
-                      {(stockMetrics.dividendYield * 100).toFixed(2)}%
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                {stockMetrics.earningsGrowth !== null && (
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      Earnings Growth
-                    </div>
-                    <div
-                      className={`font-medium ${
-                        stockMetrics.earningsGrowth > 0
-                          ? 'text-green-500'
-                          : stockMetrics.earningsGrowth < 0
-                          ? 'text-red-500'
-                          : ''
-                      }`}
-                    >
-                      {(stockMetrics.earningsGrowth * 100).toFixed(2)}%
-                    </div>
-                  </div>
-                )}
-                {stockMetrics.revenueGrowth !== null && (
-                  <div>
-                    <div className="text-sm text-muted-foreground">
-                      Revenue Growth
-                    </div>
-                    <div
-                      className={`font-medium ${
-                        stockMetrics.revenueGrowth > 0
-                          ? 'text-green-500'
-                          : stockMetrics.revenueGrowth < 0
-                          ? 'text-red-500'
-                          : ''
-                      }`}
-                    >
-                      {(stockMetrics.revenueGrowth * 100).toFixed(2)}%
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="text-center text-sm text-muted-foreground">
-              No metrics data available
-            </div>
-          )}
+      <div className="flex h-[calc(100vh-10rem)] flex-col gap-2 pb-4 sm:gap-4 sm:pb-6 md:pb-8">
+        {/* Mobile Controls - Only visible on small screens */}
+        <div className="flex gap-2 sm:hidden">
+          <Button
+            ref={metricsButtonRef}
+            variant="outline"
+            className="flex flex-1 items-center justify-center gap-1 py-2 text-xs"
+            onClick={() => {
+              setShowMetricsPanel(!showMetricsPanel);
+              if (!showMetricsPanel) {
+                setMetricsPopupPosition(positionPopup());
+                setShowOrderPanel(false);
+              }
+            }}
+          >
+            Show Metrics
+          </Button>
+          <Button
+            ref={orderButtonRef}
+            variant="outline"
+            className="flex flex-1 items-center justify-center gap-1 py-2 text-xs"
+            onClick={() => {
+              setShowOrderPanel(!showOrderPanel);
+              if (!showOrderPanel) {
+                setOrderPopupPosition(positionPopup());
+                setShowMetricsPanel(false);
+              }
+            }}
+          >
+            Place Order
+          </Button>
         </div>
 
-        {/* Main Content Area */}
-        <div className="grid min-h-0 flex-1 grid-cols-[300px_1fr] gap-6">
-          {/* Order Form Section */}
-          <div className="flex flex-col gap-6 rounded-lg border border-slate-200 p-6 dark:border-slate-800">
-            <b className="text-xl font-semibold">Place an order</b>
-            <div className="grid gap-4">
-              <div className="grid grid-cols-3 items-center gap-4">
-                <Label htmlFor="symbol">Symbol</Label>
+        {/* Mobile Metrics Panel - Popup */}
+        {showMetricsPanel && (
+          <div
+            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:hidden dark:border-slate-800 dark:bg-slate-950"
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="font-medium">Metrics</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => setShowMetricsPanel(false)}
+              >
+                <X size={16} />
+              </Button>
+            </div>
+            {isLoadingMetrics ? (
+              <MetricsSkeleton />
+            ) : stockMetrics ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-3">
+                  {stockMetrics.marketCap && (
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Market Cap
+                      </div>
+                      <div className="text-sm font-medium">
+                        ₹{(stockMetrics.marketCap / 10000000).toFixed(2)}Cr
+                      </div>
+                    </div>
+                  )}
+                  {stockMetrics.PE && (
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        P/E Ratio
+                      </div>
+                      <div className="text-sm font-medium">
+                        {stockMetrics.PE.toFixed(2)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {stockMetrics.bookValue && (
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Book Value
+                      </div>
+                      <div className="text-sm font-medium">
+                        ₹{stockMetrics.bookValue.toFixed(2)}
+                      </div>
+                    </div>
+                  )}
+                  {stockMetrics.dividendYield && (
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Dividend Yield
+                      </div>
+                      <div className="text-sm font-medium">
+                        {(stockMetrics.dividendYield * 100).toFixed(2)}%
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {stockMetrics.earningsGrowth !== null && (
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Earnings Growth
+                      </div>
+                      <div
+                        className={`font-medium ${
+                          stockMetrics.earningsGrowth > 0
+                            ? 'text-green-500'
+                            : stockMetrics.earningsGrowth < 0
+                            ? 'text-red-500'
+                            : ''
+                        }`}
+                      >
+                        {(stockMetrics.earningsGrowth * 100).toFixed(2)}%
+                      </div>
+                    </div>
+                  )}
+                  {stockMetrics.revenueGrowth !== null && (
+                    <div>
+                      <div className="text-xs text-muted-foreground">
+                        Revenue Growth
+                      </div>
+                      <div
+                        className={`font-medium ${
+                          stockMetrics.revenueGrowth > 0
+                            ? 'text-green-500'
+                            : stockMetrics.revenueGrowth < 0
+                            ? 'text-red-500'
+                            : ''
+                        }`}
+                      >
+                        {(stockMetrics.revenueGrowth * 100).toFixed(2)}%
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-xs text-muted-foreground">
+                No metrics data available
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mobile Order Panel - Popup */}
+        {showOrderPanel && (
+          <div
+            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:hidden dark:border-slate-800 dark:bg-slate-950"
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="font-medium">Place an order</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => setShowOrderPanel(false)}
+              >
+                <X size={16} />
+              </Button>
+            </div>
+            <div className="mt-1 grid gap-3">
+              <div className="grid grid-cols-3 items-center gap-2">
+                <Label htmlFor="symbol" className="text-xs">
+                  Symbol
+                </Label>
                 <Input
                   id="symbol"
-                  className="col-span-2"
+                  className="col-span-2 h-8 text-sm"
                   value={stockSymbol || ''}
                   disabled
                 />
               </div>
-              <div className="grid grid-cols-3 items-center gap-4">
+              <div className="grid grid-cols-3 items-center gap-2">
                 <Label htmlFor="price">Price</Label>
                 <Input
                   id="price"
-                  className="col-span-2"
+                  className="col-span-2 h-8 text-sm"
                   value={currentPrice ? `₹${currentPrice}` : ''}
                   disabled
                 />
               </div>
-              <div className="grid grid-cols-3 items-center gap-4">
+              <div className="grid grid-cols-3 items-center gap-2">
                 <Label htmlFor="quantity">Quantity</Label>
                 <div className="relative col-span-2">
                   <Input
@@ -448,36 +546,251 @@ export function StockDetailsModal({
                 </div>
               </div>
             </div>
-            <div className="mt-auto flex gap-2">
+            <div className="mt-3 flex gap-2">
               <Button
-                className="flex-1 bg-green-600 hover:bg-green-700"
+                className="h-8 flex-1 bg-green-600 text-xs hover:bg-green-700"
                 onClick={() => placeOrder('BUY')}
               >
                 Buy
               </Button>
               <Button
-                className="flex-1 bg-red-600 hover:bg-red-700"
+                className="h-8 flex-1 bg-red-600 text-xs hover:bg-red-700"
                 onClick={() => placeOrder('SELL')}
               >
                 Sell
               </Button>
             </div>
           </div>
+        )}
 
-          {/* Chart Section */}
-          <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 p-6 dark:border-slate-800">
-            {/* Chart Controls */}
-            <div className="mb-4 flex items-center justify-between gap-4">
-              {/* Period Selection Buttons */}
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex flex-wrap gap-1">
+        {/* Add a backdrop for the popups */}
+        {(showMetricsPanel || showOrderPanel) && (
+          <div
+            className="fixed inset-0 z-40 bg-black/50 sm:hidden"
+            onClick={() => {
+              setShowMetricsPanel(false);
+              setShowOrderPanel(false);
+            }}
+          />
+        )}
+
+        {/* Main Content Area - Updated for responsiveness */}
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 md:grid-rows-[auto_1fr] lg:grid-cols-[300px_1fr] lg:grid-rows-none">
+          {/* Left Column - Metrics and Order Form - Hidden on mobile, visible on tablet and up */}
+          <div className="hidden flex-col gap-6 sm:flex md:flex-row lg:flex-col">
+            {/* Metrics Panel - Reduced height */}
+            <div className="rounded-lg border border-slate-200 p-4 md:flex-1 lg:flex-none dark:border-slate-800">
+              {isLoadingMetrics ? (
+                <MetricsSkeleton />
+              ) : stockMetrics ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                  <div className="grid grid-cols-2 gap-4">
+                    {stockMetrics.marketCap && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Market Cap
+                        </div>
+                        <div className="font-medium">
+                          ₹{(stockMetrics.marketCap / 10000000).toFixed(2)}Cr
+                        </div>
+                      </div>
+                    )}
+                    {stockMetrics.PE && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          P/E Ratio
+                        </div>
+                        <div className="font-medium">
+                          {stockMetrics.PE.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {stockMetrics.bookValue && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Book Value
+                        </div>
+                        <div className="font-medium">
+                          ₹{stockMetrics.bookValue.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+                    {stockMetrics.dividendYield && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Dividend Yield
+                        </div>
+                        <div className="font-medium">
+                          {(stockMetrics.dividendYield * 100).toFixed(2)}%
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {stockMetrics.earningsGrowth !== null && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Earnings Growth
+                        </div>
+                        <div
+                          className={`font-medium ${
+                            stockMetrics.earningsGrowth > 0
+                              ? 'text-green-500'
+                              : stockMetrics.earningsGrowth < 0
+                              ? 'text-red-500'
+                              : ''
+                          }`}
+                        >
+                          {(stockMetrics.earningsGrowth * 100).toFixed(2)}%
+                        </div>
+                      </div>
+                    )}
+                    {stockMetrics.revenueGrowth !== null && (
+                      <div>
+                        <div className="text-sm text-muted-foreground">
+                          Revenue Growth
+                        </div>
+                        <div
+                          className={`font-medium ${
+                            stockMetrics.revenueGrowth > 0
+                              ? 'text-green-500'
+                              : stockMetrics.revenueGrowth < 0
+                              ? 'text-red-500'
+                              : ''
+                          }`}
+                        >
+                          {(stockMetrics.revenueGrowth * 100).toFixed(2)}%
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center text-sm text-muted-foreground">
+                  No metrics data available
+                </div>
+              )}
+            </div>
+
+            {/* Order Form Section - Increased flex to take more space */}
+            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 p-6 dark:border-slate-800">
+              <b className="text-xl font-semibold">Place an order</b>
+              <div className="mt-2 grid gap-4">
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="symbol">Symbol</Label>
+                  <Input
+                    id="symbol"
+                    className="col-span-2"
+                    value={stockSymbol || ''}
+                    disabled
+                  />
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="price">Price</Label>
+                  <Input
+                    id="price"
+                    className="col-span-2"
+                    value={currentPrice ? `₹${currentPrice}` : ''}
+                    disabled
+                  />
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="quantity">Quantity</Label>
+                  <div className="relative col-span-2">
+                    <Input
+                      id="numOfStocks"
+                      type="number"
+                      className="pl-8 pr-8 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                      placeholder="1"
+                      min="1"
+                    />
+                    <button
+                      className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      onClick={() => {
+                        const input = document.getElementById(
+                          'numOfStocks'
+                        ) as HTMLInputElement;
+                        const currentValue = Number(input.value) || 0;
+                        input.value = String(Math.max(1, currentValue - 1));
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                    <button
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      onClick={() => {
+                        const input = document.getElementById(
+                          'numOfStocks'
+                        ) as HTMLInputElement;
+                        const currentValue = Number(input.value) || 0;
+                        input.value = String(currentValue + 1);
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Button
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                  onClick={() => placeOrder('BUY')}
+                >
+                  Buy
+                </Button>
+                <Button
+                  className="flex-1 bg-red-600 hover:bg-red-700"
+                  onClick={() => placeOrder('SELL')}
+                >
+                  Sell
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Chart Section - Full Height */}
+          <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 p-1 sm:p-2 md:p-4 dark:border-slate-800">
+            {/* Chart Controls - Updated for better mobile responsiveness */}
+            <div className="mb-3 flex flex-col gap-1 sm:gap-2">
+              {/* Period Selection Buttons - More compact on mobile */}
+              <div className="flex items-center">
+                <div className="hide-scrollbar flex flex-nowrap gap-0.5 overflow-x-auto sm:gap-1">
                   {periods.map((period) => (
                     <Button
                       key={period}
                       variant={
                         selectedPeriod === period ? 'default' : 'outline'
                       }
-                      className="px-2 py-1 text-xs"
+                      className="h-6 min-w-[28px] px-0.5 py-0 text-[9px] sm:h-8 sm:min-w-[40px] sm:px-2 sm:py-1 sm:text-sm md:min-w-[48px]"
                       onClick={() => setSelectedPeriod(period)}
                       disabled={isLoadingChart}
                     >
@@ -485,53 +798,62 @@ export function StockDetailsModal({
                     </Button>
                   ))}
                 </div>
+              </div>
 
-                {/* Add Moving Average Controls */}
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2">
+              {/* Second row with MA Controls and Chart Type on mobile */}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                {/* Moving Average Controls */}
+                <div className="flex items-center gap-2">
+                  <label className="flex items-center gap-1 sm:gap-2">
                     <input
                       type="checkbox"
                       checked={show50MA}
                       onChange={(e) => setShow50MA(e.target.checked)}
-                      className="h-4 w-4 rounded border-gray-300"
+                      className="h-3 w-3 rounded border-gray-300 sm:h-4 sm:w-4 md:h-5 md:w-5"
                     />
-                    <span className="text-sm">50 MA</span>
+                    <span className="text-[9px] sm:text-sm md:text-base">
+                      50 MA
+                    </span>
                   </label>
-                  <label className="flex items-center gap-2">
+                  <label className="flex items-center gap-1 sm:gap-2">
                     <input
                       type="checkbox"
                       checked={show200MA}
                       onChange={(e) => setShow200MA(e.target.checked)}
-                      className="h-4 w-4 rounded border-gray-300"
+                      className="h-3 w-3 rounded border-gray-300 sm:h-4 sm:w-4 md:h-5 md:w-5"
                     />
-                    <span className="text-sm">200 MA</span>
+                    <span className="text-[9px] sm:text-sm md:text-base">
+                      200 MA
+                    </span>
                   </label>
                 </div>
-              </div>
 
-              {/* Chart Type Selection */}
-              <div className="flex gap-1">
-                <Button
-                  variant={chartType === 'candlestick' ? 'default' : 'outline'}
-                  className="px-2 py-1 text-xs"
-                  onClick={() => setChartType('candlestick')}
-                  disabled={isLoadingChart}
-                >
-                  Candlestick
-                </Button>
-                <Button
-                  variant={chartType === 'line' ? 'default' : 'outline'}
-                  className="px-2 py-1 text-xs"
-                  onClick={() => setChartType('line')}
-                  disabled={isLoadingChart}
-                >
-                  Line
-                </Button>
+                {/* Chart Type Selection */}
+                <div className="flex gap-1">
+                  <Button
+                    variant={
+                      chartType === 'candlestick' ? 'default' : 'outline'
+                    }
+                    className="h-6 px-1 py-0 text-[9px] sm:h-8 sm:px-3 sm:py-1 sm:text-sm"
+                    onClick={() => setChartType('candlestick')}
+                    disabled={isLoadingChart}
+                  >
+                    Candle
+                  </Button>
+                  <Button
+                    variant={chartType === 'line' ? 'default' : 'outline'}
+                    className="h-6 px-1 py-0 text-[9px] sm:h-8 sm:px-3 sm:py-1 sm:text-sm"
+                    onClick={() => setChartType('line')}
+                    disabled={isLoadingChart}
+                  >
+                    Line
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Chart Container */}
-            <div className="min-h-0 flex-1">
+            {/* Chart Container - Adjust height for mobile */}
+            <div className="min-h-[280px] flex-1 overflow-hidden sm:min-h-0">
               {isLoadingChart ? (
                 <div className="flex h-full w-full items-center justify-center">
                   <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
@@ -543,6 +865,7 @@ export function StockDetailsModal({
                       chart: {
                         type: chartType,
                         height: '100%',
+                        width: '100%',
                         toolbar: {
                           show: false
                         },
@@ -550,6 +873,62 @@ export function StockDetailsModal({
                           enabled: false
                         }
                       },
+                      responsive: [
+                        {
+                          breakpoint: 480,
+                          options: {
+                            chart: {
+                              height: 300
+                            },
+                            xaxis: {
+                              labels: {
+                                rotate: -45,
+                                style: {
+                                  fontSize: '11px',
+                                  fontWeight: '500'
+                                },
+                                offsetY: 12,
+                                trim: true,
+                                maxHeight: 60
+                              },
+                              tickAmount: 5
+                            },
+                            yaxis: {
+                              labels: {
+                                style: {
+                                  fontSize: '11px'
+                                },
+                                formatter: function (val: number) {
+                                  if (typeof val === 'number') {
+                                    return '₹' + val.toFixed(0);
+                                  }
+                                  return val;
+                                },
+                                align: 'left',
+                                offsetX: -10
+                              },
+                              tickAmount: 5,
+                              axisTicks: {
+                                show: false,
+                                color: axisColor,
+                                offsetX: -5
+                              }
+                            },
+                            grid: {
+                              padding: {
+                                left: 5,
+                                right: 5
+                              }
+                            },
+                            legend: {
+                              fontSize: '11px',
+                              position: 'bottom',
+                              offsetY: 0,
+                              height: 30
+                            }
+                          }
+                        }
+                      ],
                       grid: {
                         padding: {
                           top: 0,
@@ -575,9 +954,11 @@ export function StockDetailsModal({
                             return new Date(val).toLocaleDateString();
                           },
                           style: {
-                            colors: axisColor
+                            colors: axisColor,
+                            fontSize: '11px'
                           },
-                          offsetX: 0
+                          offsetX: 0,
+                          offsetY: -5
                         },
                         axisBorder: {
                           color: axisColor,
@@ -600,19 +981,21 @@ export function StockDetailsModal({
                             return val;
                           },
                           style: {
-                            colors: [axisColor]
+                            colors: [axisColor],
+                            fontSize: '11px'
                           },
-                          offsetX: -15
+                          align: 'left',
+                          offsetX: 0
                         },
                         forceNiceScale: true,
                         decimalsInFloat: 2,
                         axisBorder: {
-                          show: true,
+                          show: false,
                           color: axisColor,
                           offsetX: 0
                         },
                         axisTicks: {
-                          show: true,
+                          show: false,
                           color: axisColor,
                           offsetX: 0
                         }
