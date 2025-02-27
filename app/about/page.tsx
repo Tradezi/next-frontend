@@ -110,9 +110,9 @@ export default function AboutPage() {
             Our Mission
           </h3>
           <p className="text-sm sm:text-base">
-            At Tradezi, we're on a mission to democratize stock market education
-            by providing a risk-free environment where beginners can learn,
-            practice, and gain confidence before investing real money.
+            At Tradezi, we&apos;re on a mission to democratize stock market
+            education by providing a risk-free environment where beginners can
+            learn, practice, and gain confidence before investing real money.
           </p>
           <p className="text-sm sm:text-base">
             We believe financial literacy should be accessible to everyone,
@@ -139,9 +139,9 @@ export default function AboutPage() {
             Beyond the platform itself, we offer educational resources, from
             basic terminology to advanced trading strategies. Our analytics
             tools help users understand their trading patterns, identify
-            mistakes, and improve their strategies over time. We're constantly
-            refining our platform based on user feedback to create the most
-            effective learning experience possible.
+            mistakes, and improve their strategies over time. We&apos;re
+            constantly refining our platform based on user feedback to create
+            the most effective learning experience possible.
           </p>
         </section>
 
