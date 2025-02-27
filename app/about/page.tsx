@@ -75,7 +75,7 @@ export default function AboutPage() {
                   alt="Ronak Doshi"
                   width={160}
                   height={160}
-                  className="object-cover"
+                  className="object-cover object-bottom"
                 />
               </div>
               <h4 className="text-sm font-bold sm:text-base">Ronak Doshi</h4>
