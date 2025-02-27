@@ -58,6 +58,9 @@ export default function AboutPage() {
                 />
               </div>
               <h4 className="text-sm font-bold sm:text-base">Advait Lonkar</h4>
+              <p className="text-xs text-gray-600 sm:text-sm dark:text-gray-400">
+                Co-founder
+              </p>
               <p className="mt-1 text-xs sm:mt-2 sm:text-sm">
                 Combining a passion for finance with technical expertise to make
                 stock trading accessible to everyone.
@@ -68,7 +71,7 @@ export default function AboutPage() {
             <div className="text-center">
               <div className="mx-auto mb-3 h-32 w-32 overflow-hidden rounded-full bg-gray-200 sm:mb-4 sm:h-40 sm:w-40">
                 <Image
-                  src="https://avatars.githubusercontent.com/u/33517942?v=4"
+                  src="/Ronak_Doshi.jpg"
                   alt="Ronak Doshi"
                   width={160}
                   height={160}
@@ -76,6 +79,9 @@ export default function AboutPage() {
                 />
               </div>
               <h4 className="text-sm font-bold sm:text-base">Ronak Doshi</h4>
+              <p className="text-xs text-gray-600 sm:text-sm dark:text-gray-400">
+                Co-founder
+              </p>
               <p className="mt-1 text-xs sm:mt-2 sm:text-sm">
                 Building the technical foundation that powers Tradezi&apos;s
                 realistic virtual trading experience.
@@ -96,6 +102,9 @@ export default function AboutPage() {
               <h4 className="text-sm font-bold sm:text-base">
                 Arvind Ramshankar
               </h4>
+              <p className="text-xs text-gray-600 sm:text-sm dark:text-gray-400">
+                Co-founder
+              </p>
               <p className="mt-1 text-xs sm:mt-2 sm:text-sm">
                 Creating educational content and ensuring Tradezi is intuitive
                 for complete beginners.
