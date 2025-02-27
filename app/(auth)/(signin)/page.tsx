@@ -61,11 +61,11 @@ export default async function AuthenticationPage() {
             <span className="text-2xl sm:text-3xl lg:text-3xl">Tradezi</span>
           </div>
         </div>
-        <div className="relative z-20 flex flex-1 flex-col lg:items-start lg:justify-center">
+        <div className="relative z-20 flex flex-1 flex-col lg:mt-[220px] lg:items-start">
           <div className="px-6 pb-8 pt-16 sm:pt-20 lg:px-16 lg:py-0">
             <div className="space-y-4 text-center lg:text-left">
               <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-5xl">
-                Learn to Trade, <br />
+                Trade Easy, <br />
                 Risk-Free
               </h2>
               <p className="text-base text-zinc-300 sm:text-lg lg:text-2xl">
@@ -79,7 +79,7 @@ export default async function AuthenticationPage() {
         </div>
       </div>
 
-      <div className="flex h-[50vh] flex-col lg:mt-[140px] lg:flex lg:h-[calc(100vh-140px)]">
+      <div className="flex h-[50vh] flex-col lg:mt-[100px] lg:flex lg:h-[calc(100vh-140px)]">
         <div className="flex flex-1 items-center px-4 py-12 sm:px-8 sm:py-16 lg:flex lg:items-center lg:justify-center lg:p-12 ">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:max-w-[400px] lg:max-w-[450px]">
             <div className="flex flex-col space-y-2 text-center">

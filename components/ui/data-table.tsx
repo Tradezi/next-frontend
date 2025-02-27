@@ -49,7 +49,13 @@ export function DataTable<TData, TValue>({
   // First filter the entire dataset
   const filteredData = data.filter((item) => {
     const value = (item as any)[searchKey]?.toString().toLowerCase();
-    return globalFilter === '' || value?.includes(globalFilter.toLowerCase());
+    // Only apply filtering if search term is empty or has 4+ characters
+    // If fewer than 4 characters, return true to include all items
+    return (
+      globalFilter === '' ||
+      globalFilter.length < 4 ||
+      (globalFilter.length >= 4 && value?.includes(globalFilter.toLowerCase()))
+    );
   });
 
   // Then paginate the filtered results
@@ -90,7 +96,7 @@ export function DataTable<TData, TValue>({
         placeholder={`Search ${searchKey
           ?.replace(/([A-Z])/g, ' $1')
           .trim()
-          .toLowerCase()}...`}
+          .toLowerCase()}... (type at least 4 characters)`}
         value={globalFilter}
         onChange={(event) => setGlobalFilter(event.target.value)}
         className="mb-2 w-full"
