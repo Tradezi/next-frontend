@@ -77,7 +77,7 @@ export default function AboutPage() {
               </div>
               <h4 className="text-sm font-bold sm:text-base">Ronak Doshi</h4>
               <p className="mt-1 text-xs sm:mt-2 sm:text-sm">
-                Building the technical foundation that powers Tradezi's
+                Building the technical foundation that powers Tradezi&apos;s
                 realistic virtual trading experience.
               </p>
             </div>
