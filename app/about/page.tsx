@@ -157,9 +157,9 @@ export default function AboutPage() {
               live data.
             </li>
             <li>
-              <span className="font-medium">Educational Focus:</span> We're not
-              just a simulator—we're a comprehensive learning platform with
-              resources for all levels.
+              <span className="font-medium">Educational Focus:</span> We&apos;re
+              not just a simulator—we&apos;re a comprehensive learning platform
+              with resources for all levels.
             </li>
             <li>
               <span className="font-medium">Performance Analytics:</span>{' '}
@@ -187,8 +187,8 @@ export default function AboutPage() {
             Join Our Journey
           </h3>
           <p className="mb-4 text-sm text-gray-700 sm:text-base dark:text-gray-300">
-            Whether you're completely new to investing or looking to refine your
-            trading strategies, Tradezi is your risk-free gateway to stock
+            Whether you&apos;re completely new to investing or looking to refine
+            your trading strategies, Tradezi is your risk-free gateway to stock
             market confidence. Join thousands of users who are building their
             investing skills one virtual trade at a time.
           </p>
