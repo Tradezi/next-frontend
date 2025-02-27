@@ -195,7 +195,7 @@ export default function AboutPage() {
           <div className="mt-4">
             <a
               href="/dashboard"
-              className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 sm:px-6 sm:text-base"
+              className="inline-block rounded-md bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 sm:px-6 sm:text-base"
             >
               Start Trading Today
             </a>
