@@ -252,9 +252,14 @@ export default function DashboardPage() {
                   </div>
                   <p className="text-xs text-muted-foreground md:text-sm">
                     {currentPrice >= investedAmount ? `+` : `-`}
-                    {Math.abs(
+                    {isNaN(
                       ((currentPrice - investedAmount) / investedAmount) * 100
-                    ).toFixed(2)}
+                    )
+                      ? '0.00'
+                      : Math.abs(
+                          ((currentPrice - investedAmount) / investedAmount) *
+                            100
+                        ).toFixed(2)}
                     % overall return
                   </p>
                 </>
