@@ -1,7 +1,7 @@
 import Providers from '@/components/layout/providers';
 import { Toaster } from '@/components/ui/toaster';
 import '@uploadthing/react/styles.css';
-import type { Metadata, ViewportConfig } from 'next';
+import type { Metadata } from 'next';
 import NextTopLoader from 'nextjs-toploader';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   }
 };
 
-export const viewport: ViewportConfig = {
+export const viewport = {
   width: 'device-width',
   initialScale: 1
 };

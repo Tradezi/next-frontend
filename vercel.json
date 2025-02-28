@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/analytics",
+      "destination": "https://umami-analytics-personal.vercel.app/share/E1fNkcpKonXds3dj/tradezi.co.in"
+    }
+  ]
+}
