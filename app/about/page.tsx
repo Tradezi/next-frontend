@@ -92,15 +92,15 @@ export default function AboutPage() {
             <div className="text-center sm:col-span-2 md:col-span-1">
               <div className="mx-auto mb-3 h-32 w-32 overflow-hidden rounded-full bg-gray-200 sm:mb-4 sm:h-40 sm:w-40">
                 <Image
-                  src="https://avatars.githubusercontent.com/u/32129503?v=4"
-                  alt="Arvind Ramshankar"
+                  src="/Arvind_Ramsankar.jpg"
+                  alt="Arvind Ramsankar"
                   width={160}
                   height={160}
-                  className="object-cover"
+                  className="object-cover object-bottom"
                 />
               </div>
               <h4 className="text-sm font-bold sm:text-base">
-                Arvind Ramshankar
+                Arvind Ramsankar
               </h4>
               <p className="text-xs text-gray-600 sm:text-sm dark:text-gray-400">
                 Co-founder
