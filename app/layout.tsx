@@ -6,6 +6,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { auth } from '@/auth';
+import Head from 'next/head';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,6 +23,13 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <html lang="en">
+      <Head>
+        <script
+          defer
+          src="https://umami-analytics-personal.vercel.app/script.js"
+          data-website-id="74a2b786-a212-47bf-a088-f120a6e3a0fc"
+        ></script>
+      </Head>
       <body
         className={`${inter.className} overflow-hidden `}
         suppressHydrationWarning={true}
