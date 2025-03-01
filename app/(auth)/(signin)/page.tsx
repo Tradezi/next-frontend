@@ -61,9 +61,9 @@ export default async function AuthenticationPage() {
             <span className="text-2xl sm:text-3xl lg:text-3xl">Tradezi</span>
           </div>
         </div>
-        <div className="relative z-20 flex flex-1 flex-col lg:mt-[220px] lg:items-start">
+        <div className="relative z-20 flex flex-1 flex-col lg:items-start lg:justify-center ">
           <div className="px-6 pb-8 pt-16 sm:pt-20 lg:px-16 lg:py-0">
-            <div className="space-y-4 text-center lg:text-left">
+            <div className="space-y-4 text-center lg:-mt-[100px] lg:text-left">
               <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-5xl">
                 Trade Easy, <br />
                 Risk-Free
@@ -84,7 +84,7 @@ export default async function AuthenticationPage() {
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:max-w-[400px] lg:max-w-[450px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-xl font-semibold tracking-tight sm:text-2xl lg:text-3xl">
-                Create an account
+                Get Started
               </h1>
             </div>
             <div className="w-full">
