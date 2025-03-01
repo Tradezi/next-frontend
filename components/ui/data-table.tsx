@@ -134,6 +134,9 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
+                    data-umami-event={`stock_click_${
+                      (row.original as any).symbol
+                    }`}
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => onRowClick?.(row.original)}
                   >

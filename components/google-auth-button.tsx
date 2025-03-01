@@ -19,6 +19,7 @@ export default function GoogleSignInButton() {
       variant="outline"
       type="button"
       onClick={handleGoogleSignIn}
+      data-umami-event="google-sign-in"
     >
       <Icons.google className="mr-2 h-4 w-4" />
       Continue with Google

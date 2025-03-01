@@ -234,33 +234,33 @@ export function StockDetailsModal({
   }));
 
   const MetricsSkeleton = () => (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap gap-4">
+        <div className="min-w-[120px] flex-1">
           <Skeleton className="mb-2 h-4 w-20" />
           <Skeleton className="h-5 w-24" />
         </div>
-        <div>
-          <Skeleton className="mb-2 h-4 w-20" />
-          <Skeleton className="h-5 w-24" />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Skeleton className="mb-2 h-4 w-20" />
-          <Skeleton className="h-5 w-24" />
-        </div>
-        <div>
+        <div className="min-w-[120px] flex-1">
           <Skeleton className="mb-2 h-4 w-20" />
           <Skeleton className="h-5 w-24" />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
+      <div className="flex flex-wrap gap-4">
+        <div className="min-w-[120px] flex-1">
           <Skeleton className="mb-2 h-4 w-20" />
           <Skeleton className="h-5 w-24" />
         </div>
-        <div>
+        <div className="min-w-[120px] flex-1">
+          <Skeleton className="mb-2 h-4 w-20" />
+          <Skeleton className="h-5 w-24" />
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-4">
+        <div className="min-w-[120px] flex-1">
+          <Skeleton className="mb-2 h-4 w-20" />
+          <Skeleton className="h-5 w-24" />
+        </div>
+        <div className="min-w-[120px] flex-1">
           <Skeleton className="mb-2 h-4 w-20" />
           <Skeleton className="h-5 w-24" />
         </div>
@@ -282,7 +282,7 @@ export function StockDetailsModal({
       onClose={onClose}
       className="h-full max-w-full"
     >
-      <div className="mb-4">
+      <div className="sm:mb-4">
         <h2 className="text-left text-lg font-semibold sm:text-xl md:text-2xl">
           {stockSymbol}
         </h2>
@@ -348,61 +348,61 @@ export function StockDetailsModal({
             {isLoadingMetrics ? (
               <MetricsSkeleton />
             ) : stockMetrics ? (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-3">
+                <div className="flex gap-3">
                   {stockMetrics.marketCap && (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">
                         Market Cap
                       </div>
-                      <div className="text-sm font-medium">
+                      <div className="truncate text-sm font-medium">
                         ₹{(stockMetrics.marketCap / 10000000).toFixed(2)}Cr
                       </div>
                     </div>
                   )}
                   {stockMetrics.PE && (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">
                         P/E Ratio
                       </div>
-                      <div className="text-sm font-medium">
+                      <div className="truncate text-sm font-medium">
                         {stockMetrics.PE.toFixed(2)}
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex gap-3">
                   {stockMetrics.bookValue && (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">
                         Book Value
                       </div>
-                      <div className="text-sm font-medium">
+                      <div className="truncate text-sm font-medium">
                         ₹{stockMetrics.bookValue.toFixed(2)}
                       </div>
                     </div>
                   )}
                   {stockMetrics.dividendYield && (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">
                         Dividend Yield
                       </div>
-                      <div className="text-sm font-medium">
+                      <div className="truncate text-sm font-medium">
                         {(stockMetrics.dividendYield * 100).toFixed(2)}%
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex gap-3">
                   {stockMetrics.earningsGrowth !== null && (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">
                         Earnings Growth
                       </div>
                       <div
-                        className={`font-medium ${
+                        className={`truncate font-medium ${
                           stockMetrics.earningsGrowth > 0
                             ? 'text-green-500'
                             : stockMetrics.earningsGrowth < 0
@@ -415,12 +415,12 @@ export function StockDetailsModal({
                     </div>
                   )}
                   {stockMetrics.revenueGrowth !== null && (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <div className="text-xs text-muted-foreground">
                         Revenue Growth
                       </div>
                       <div
-                        className={`font-medium ${
+                        className={`truncate font-medium ${
                           stockMetrics.revenueGrowth > 0
                             ? 'text-green-500'
                             : stockMetrics.revenueGrowth < 0
@@ -575,18 +575,18 @@ export function StockDetailsModal({
         )}
 
         {/* Main Content Area - Updated for responsiveness */}
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 md:grid-rows-[auto_1fr] lg:grid-cols-[300px_1fr] lg:grid-rows-none">
+        <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-rows-[auto_1fr] lg:grid-cols-[1fr_3fr] lg:grid-rows-none">
           {/* Left Column - Metrics and Order Form - Hidden on mobile, visible on tablet and up */}
-          <div className="hidden flex-col gap-6 sm:flex md:flex-row lg:flex-col">
-            {/* Metrics Panel - Reduced height */}
-            <div className="rounded-lg border border-slate-200 p-4 md:flex-1 lg:flex-none dark:border-slate-800">
+          <div className="hidden flex-col gap-2 overflow-y-auto sm:flex md:flex-row lg:flex-col">
+            {/* Metrics Panel - Added max-height and overflow handling */}
+            <div className="rounded-lg border border-slate-200 px-4 py-2 md:flex-1 lg:h-auto lg:max-h-[40%] lg:overflow-y-auto dark:border-slate-800">
               {isLoadingMetrics ? (
                 <MetricsSkeleton />
               ) : stockMetrics ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap md:flex-col">
+                  <div className="flex flex-wrap gap-4 sm:flex-1 md:w-full">
                     {stockMetrics.marketCap && (
-                      <div>
+                      <div className="min-w-[120px] flex-1">
                         <div className="text-sm text-muted-foreground">
                           Market Cap
                         </div>
@@ -596,7 +596,7 @@ export function StockDetailsModal({
                       </div>
                     )}
                     {stockMetrics.PE && (
-                      <div>
+                      <div className="min-w-[120px] flex-1">
                         <div className="text-sm text-muted-foreground">
                           P/E Ratio
                         </div>
@@ -607,9 +607,9 @@ export function StockDetailsModal({
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-wrap gap-4 sm:flex-1 md:w-full">
                     {stockMetrics.bookValue && (
-                      <div>
+                      <div className="min-w-[120px] flex-1">
                         <div className="text-sm text-muted-foreground">
                           Book Value
                         </div>
@@ -619,7 +619,7 @@ export function StockDetailsModal({
                       </div>
                     )}
                     {stockMetrics.dividendYield && (
-                      <div>
+                      <div className="min-w-[120px] flex-1">
                         <div className="text-sm text-muted-foreground">
                           Dividend Yield
                         </div>
@@ -630,9 +630,9 @@ export function StockDetailsModal({
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-wrap gap-4 sm:flex-1 md:w-full">
                     {stockMetrics.earningsGrowth !== null && (
-                      <div>
+                      <div className="min-w-[120px] flex-1">
                         <div className="text-sm text-muted-foreground">
                           Earnings Growth
                         </div>
@@ -650,7 +650,7 @@ export function StockDetailsModal({
                       </div>
                     )}
                     {stockMetrics.revenueGrowth !== null && (
-                      <div>
+                      <div className="min-w-[120px] flex-1">
                         <div className="text-sm text-muted-foreground">
                           Revenue Growth
                         </div>
@@ -676,11 +676,11 @@ export function StockDetailsModal({
               )}
             </div>
 
-            {/* Order Form Section - Increased flex to take more space */}
-            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 p-6 dark:border-slate-800">
-              <b className="text-xl font-semibold">Place an order</b>
-              <div className="mt-2 grid gap-4">
-                <div className="grid grid-cols-3 items-center gap-4">
+            {/* Order Form Section */}
+            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 px-4 py-2 lg:max-h-[60%] lg:overflow-y-auto dark:border-slate-800">
+              <b className="text-lg font-semibold">Place an order</b>
+              <div className="mt-2 grid gap-2">
+                <div className="grid grid-cols-3 items-center gap-2">
                   <Label htmlFor="symbol">Symbol</Label>
                   <Input
                     id="symbol"
@@ -689,7 +689,7 @@ export function StockDetailsModal({
                     disabled
                   />
                 </div>
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-3 items-center gap-2">
                   <Label htmlFor="price">Price</Label>
                   <Input
                     id="price"
@@ -698,7 +698,7 @@ export function StockDetailsModal({
                     disabled
                   />
                 </div>
-                <div className="grid grid-cols-3 items-center gap-4">
+                <div className="grid grid-cols-3 items-center gap-2">
                   <Label htmlFor="quantity">Quantity</Label>
                   <div className="relative col-span-2">
                     <Input
