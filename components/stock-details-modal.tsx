@@ -327,7 +327,7 @@ export function StockDetailsModal({
         {/* Mobile Metrics Panel - Popup */}
         {showMetricsPanel && (
           <div
-            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:hidden dark:border-slate-800 dark:bg-slate-950"
+            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-950 sm:hidden"
             style={{
               top: '50%',
               left: '50%',
@@ -445,7 +445,7 @@ export function StockDetailsModal({
         {/* Mobile Order Panel - Popup */}
         {showOrderPanel && (
           <div
-            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:hidden dark:border-slate-800 dark:bg-slate-950"
+            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-950 sm:hidden"
             style={{
               top: '50%',
               left: '50%',
@@ -579,7 +579,7 @@ export function StockDetailsModal({
           {/* Left Column - Metrics and Order Form - Hidden on mobile, visible on tablet and up */}
           <div className="hidden flex-col gap-2 overflow-y-auto sm:flex md:flex-row lg:flex-col">
             {/* Metrics Panel - Added max-height and overflow handling */}
-            <div className="rounded-lg border border-slate-200 px-4 py-2 md:flex-1 lg:h-auto lg:max-h-[40%] lg:overflow-y-auto dark:border-slate-800">
+            <div className="rounded-lg border border-slate-200 px-4 py-2 dark:border-slate-800 md:flex-1 lg:h-auto lg:max-h-[40%] lg:overflow-y-auto">
               {isLoadingMetrics ? (
                 <MetricsSkeleton />
               ) : stockMetrics ? (
@@ -677,7 +677,7 @@ export function StockDetailsModal({
             </div>
 
             {/* Order Form Section */}
-            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 px-4 py-2 lg:max-h-[60%] lg:overflow-y-auto dark:border-slate-800">
+            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 px-4 py-2 dark:border-slate-800 lg:max-h-[60%] lg:overflow-y-auto">
               <b className="text-lg font-semibold">Place an order</b>
               <div className="mt-2 grid gap-2">
                 <div className="grid grid-cols-3 items-center gap-2">
@@ -778,7 +778,7 @@ export function StockDetailsModal({
           </div>
 
           {/* Chart Section - Full Height */}
-          <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 p-1 sm:p-2 md:p-4 dark:border-slate-800">
+          <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 p-1 dark:border-slate-800 sm:p-2 md:p-4">
             {/* Chart Controls - Updated for better mobile responsiveness */}
             <div className="mb-3 flex flex-col gap-1 sm:gap-2">
               {/* Period Selection Buttons - More compact on mobile */}
