@@ -8,7 +8,7 @@ import { Modal } from '@/components/ui/modal';
 import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { X } from 'lucide-react';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface CandleData {
@@ -276,22 +276,13 @@ export function StockDetailsModal({
 
   return (
     <Modal
-      title=""
-      description=""
+      title={stockSymbol}
+      description={companyName || stockSymbol}
       isOpen={isOpen}
       onClose={onClose}
       className="h-full max-w-full"
     >
-      <div className="sm:mb-4">
-        <h2 className="text-left text-lg font-semibold sm:text-xl md:text-2xl">
-          {stockSymbol}
-        </h2>
-        <p className="text-left text-xs text-muted-foreground sm:text-sm">
-          {companyName || (stockSymbol ? `${stockSymbol}` : '')}
-        </p>
-      </div>
-
-      <div className="flex h-[calc(100vh-10rem)] flex-col gap-2 pb-4 sm:gap-4 sm:pb-6 md:pb-8">
+      <div className="flex h-full flex-col gap-2 pb-4 sm:gap-2 sm:pb-4 md:pb-8">
         {/* Mobile Controls - Only visible on small screens */}
         <div className="flex gap-2 sm:hidden">
           <Button
@@ -327,7 +318,7 @@ export function StockDetailsModal({
         {/* Mobile Metrics Panel - Popup */}
         {showMetricsPanel && (
           <div
-            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-950 sm:hidden"
+            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:hidden dark:border-slate-800 dark:bg-slate-950"
             style={{
               top: '50%',
               left: '50%',
@@ -445,7 +436,7 @@ export function StockDetailsModal({
         {/* Mobile Order Panel - Popup */}
         {showOrderPanel && (
           <div
-            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-800 dark:bg-slate-950 sm:hidden"
+            className="fixed z-50 w-[calc(100%-2rem)] max-w-md rounded-lg border border-slate-200 bg-white p-3 shadow-lg sm:hidden dark:border-slate-800 dark:bg-slate-950"
             style={{
               top: '50%',
               left: '50%',
@@ -579,7 +570,7 @@ export function StockDetailsModal({
           {/* Left Column - Metrics and Order Form - Hidden on mobile, visible on tablet and up */}
           <div className="hidden flex-col gap-2 overflow-y-auto sm:flex md:flex-row lg:flex-col">
             {/* Metrics Panel - Added max-height and overflow handling */}
-            <div className="rounded-lg border border-slate-200 px-4 py-2 dark:border-slate-800 md:flex-1 lg:h-auto lg:max-h-[40%] lg:overflow-y-auto">
+            <div className="rounded-lg border border-slate-200 px-4 py-2 md:flex-1 lg:h-auto lg:max-h-[40%] lg:overflow-y-auto dark:border-slate-800">
               {isLoadingMetrics ? (
                 <MetricsSkeleton />
               ) : stockMetrics ? (
@@ -677,7 +668,7 @@ export function StockDetailsModal({
             </div>
 
             {/* Order Form Section */}
-            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 px-4 py-2 dark:border-slate-800 lg:max-h-[60%] lg:overflow-y-auto">
+            <div className="flex flex-1 flex-col rounded-lg border border-slate-200 px-4 py-2 lg:max-h-[60%] lg:overflow-y-auto dark:border-slate-800">
               <b className="text-lg font-semibold">Place an order</b>
               <div className="mt-2 grid gap-2">
                 <div className="grid grid-cols-3 items-center gap-2">
@@ -778,7 +769,7 @@ export function StockDetailsModal({
           </div>
 
           {/* Chart Section - Full Height */}
-          <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 p-1 dark:border-slate-800 sm:p-2 md:p-4">
+          <div className="flex min-h-0 flex-col rounded-lg border border-slate-200 p-1 sm:p-2 md:p-4 dark:border-slate-800">
             {/* Chart Controls - Updated for better mobile responsiveness */}
             <div className="mb-3 flex flex-col gap-1 sm:gap-2">
               {/* Period Selection Buttons - More compact on mobile */}

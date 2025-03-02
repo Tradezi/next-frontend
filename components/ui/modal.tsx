@@ -35,10 +35,11 @@ export function Modal({
     <Dialog open={isOpen} onOpenChange={onChange}>
       <DialogContent
         className={cn(
+          'flex flex-col',
           'sm:max-w-[100vw]',
-          'w-[calc(100vw-2rem)] md:w-[calc(100vw-4rem)]',
-          'h-[calc(100vh-2rem)] md:h-[calc(100vh-4rem)]',
-          'mx-auto my-auto rounded-xl',
+          'sm:w-[calc(100vw-2rem)] md:w-[calc(100vw-4rem)] lg:w-[calc(100vw-2rem)]',
+          'sm:h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] lg:h-[calc(100vh-2rem)]',
+          'mx-auto my-auto md:rounded-xl',
           'border-2 border-border bg-card shadow-lg',
           className
         )}
@@ -47,7 +48,7 @@ export function Modal({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <div className="h-[calc(100%-2rem)]">{children}</div>
+        <div className="h-[calc(100%-2rem)] sm:h-full">{children}</div>
       </DialogContent>
     </Dialog>
   );
