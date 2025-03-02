@@ -150,11 +150,7 @@ export default function DashboardPage() {
       <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
         <div className="flex items-center justify-between px-4 md:px-2">
           <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
-            {user ? (
-              ` Welcome ${user.name}`
-            ) : (
-              <Skeleton className="h-8 w-[100px]" />
-            )}
+            Dashboard
           </h2>
         </div>
 

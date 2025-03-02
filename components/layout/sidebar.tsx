@@ -1,21 +1,87 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { cn } from '@/lib/utils';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, User, LogOut } from 'lucide-react';
 import { useSidebar } from '@/hooks/useSidebar';
 import Link from 'next/link';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 type SidebarProps = {
   className?: string;
 };
 
+interface UserData {
+  name: string;
+  email: string;
+  balance: number;
+}
+
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    // First try to get user data from cookie
+    const userCookie = Cookies.get('user');
+    if (userCookie) {
+      try {
+        const parsedUser = JSON.parse(userCookie);
+        setUserData(parsedUser);
+      } catch (error) {
+        console.error('Error parsing user cookie:', error);
+      }
+    } else {
+      // If no cookie, try to fetch from API
+      const api = axios.create({
+        baseURL:
+          process.env.NEXT_PUBLIC_FLASK_BACKEND_URL ||
+          'https://backend.tradezi.co.in',
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      });
+
+      // Add cookie header on client side
+      if (typeof window !== 'undefined') {
+        api.interceptors.request.use((config) => {
+          config.headers.Cookie = document.cookie;
+          return config;
+        });
+      }
+
+      api
+        .get('/user/details')
+        .then((response) => {
+          setUserData(response.data);
+          // Also set the cookie for future use
+          Cookies.set('user', JSON.stringify(response.data), { expires: 7 });
+        })
+        .catch((error) => {
+          console.error('Failed to fetch user data:', error);
+        });
+    }
+  }, []);
 
   const handleToggle = () => {
     toggle();
+  };
+
+  const handleLogout = () => {
+    // Remove cookies
+    Cookies.remove('user');
+    // Redirect to home/login page
+    window.location.href = '/';
   };
 
   return (
@@ -55,7 +121,7 @@ export default function Sidebar({ className }: SidebarProps) {
         )}
         onClick={handleToggle}
       />
-      <div className="space-y-4 py-4">
+      <div className="flex h-[calc(100%-4rem)] flex-col justify-between py-4">
         <div
           className={cn(
             'px-3 py-2',
@@ -66,6 +132,53 @@ export default function Sidebar({ className }: SidebarProps) {
             <DashboardNav items={navItems} />
           </div>
         </div>
+
+        {userData && (
+          <div
+            className={cn(
+              'mt-auto border-t p-4',
+              isMinimized ? 'text-center' : 'px-4'
+            )}
+          >
+            {isMinimized ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center justify-center">
+                  <User className="h-5 w-5 cursor-pointer" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" sideOffset={10}>
+                  <DropdownMenuItem className="text-sm font-medium">
+                    {userData.name}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-500"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex w-full items-center">
+                  <User className="mr-2 h-5 w-5" />
+                  <div className="overflow-hidden text-sm">
+                    <p className="truncate font-medium">{userData.name}</p>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" sideOffset={10}>
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-500"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
+        )}
       </div>
     </aside>
   );

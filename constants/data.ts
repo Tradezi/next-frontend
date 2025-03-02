@@ -128,11 +128,5 @@ export const navItems: NavItem[] = [
     href: '/about',
     icon: 'about',
     label: 'about'
-  },
-  {
-    title: 'Logout',
-    href: '/',
-    icon: 'logout',
-    label: 'logout'
   }
 ];
