@@ -44,7 +44,7 @@ export function Modal({
           className
         )}
       >
-        <DialogHeader>
+        <DialogHeader className="flex flex-col items-start justify-center">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>

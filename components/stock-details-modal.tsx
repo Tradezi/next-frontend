@@ -282,7 +282,7 @@ export function StockDetailsModal({
       onClose={onClose}
       className="h-full max-w-full"
     >
-      <div className="flex h-full flex-col gap-2 pb-4 sm:gap-2 sm:pb-4 md:pb-8">
+      <div className="flex h-full flex-col gap-2 pb-4 sm:gap-2  md:pb-8">
         {/* Mobile Controls - Only visible on small screens */}
         <div className="flex gap-2 sm:hidden">
           <Button
