@@ -15,6 +15,7 @@ import { Modal } from '@/components/ui/modal';
 import dynamic from 'next/dynamic';
 import { StockDetailsModal } from '@/components/stock-details-modal';
 import { formatIndianNumber } from '@/lib/utils';
+import { useToast } from '@/components/ui/use-toast';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface User {
@@ -48,6 +49,7 @@ if (typeof window !== 'undefined') {
 }
 
 export default function DashboardPage() {
+  const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [investedAmount, setInvestedAmount] = useState<number>(0);
@@ -124,7 +126,11 @@ export default function DashboardPage() {
       document.getElementById('numOfStocks') as HTMLInputElement
     ).value;
     if (!selectedOrder?.stockSymbol || !quantity) {
-      alert('Please enter quantity.');
+      toast({
+        title: 'Error',
+        description: 'Please enter quantity.',
+        variant: 'destructive'
+      });
       return;
     }
     try {
@@ -133,15 +139,22 @@ export default function DashboardPage() {
         numOfStocks: parseInt(quantity),
         type: type
       });
-      alert('Order placed successfully!');
+      toast({
+        title: 'Success',
+        description: 'Order placed successfully!',
+        variant: 'default'
+      });
       window.location.reload();
     } catch (error) {
       console.error('Error placing order:', error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : 'Failed to place order. Please try again.'
-      );
+      toast({
+        title: 'Error',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to place order. Please try again.',
+        variant: 'destructive'
+      });
     }
   };
 

@@ -32,6 +32,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       description="This action cannot be undone."
       isOpen={isOpen}
       onClose={onClose}
+      className="sm:h-[calc(100vh-2rem)] sm:w-[calc(100vw-2rem)] md:h-[calc(100vh-4rem)] md:w-[calc(100vw-4rem)] lg:h-[200px] lg:w-[400px]"
     >
       <div className="flex w-full items-center justify-end space-x-2 pt-6">
         <Button disabled={loading} variant="outline" onClick={onClose}>

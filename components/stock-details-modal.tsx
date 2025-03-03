@@ -9,6 +9,8 @@ import dynamic from 'next/dynamic';
 import axios from 'axios';
 import { Skeleton } from '@/components/ui/skeleton';
 import { X } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
+import { AlertModal } from '@/components/modal/alert-modal';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface CandleData {
@@ -103,6 +105,16 @@ export function StockDetailsModal({
   });
   const metricsButtonRef = useRef<HTMLButtonElement>(null);
   const orderButtonRef = useRef<HTMLButtonElement>(null);
+  const { toast } = useToast();
+
+  // Update state for confirmation
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [pendingOrderType, setPendingOrderType] = useState<
+    'BUY' | 'SELL' | null
+  >(null);
+  const [orderQuantity, setOrderQuantity] = useState<string>('');
+  const [totalOrderValue, setTotalOrderValue] = useState<number>(0);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const periods: PeriodOption[] = [
     '5d',
@@ -196,34 +208,81 @@ export function StockDetailsModal({
     } catch (error) {
       console.error('Error fetching stock history:', error);
       setStockHistory([]);
+      toast({
+        title: 'Error',
+        description: 'Failed to load stock history. Please try again.',
+        variant: 'destructive'
+      });
     } finally {
       setIsLoadingChart(false);
     }
   };
 
-  const placeOrder = async (type: 'BUY' | 'SELL') => {
+  // Update this function to show confirmation instead of placing order directly
+  const initiateOrder = (type: 'BUY' | 'SELL') => {
     const quantity = (
       document.getElementById('numOfStocks') as HTMLInputElement
     ).value;
+
     if (!stockSymbol || !quantity) {
-      alert('Please enter quantity.');
+      toast({
+        title: 'Error',
+        description: 'Please enter quantity.',
+        variant: 'destructive'
+      });
       return;
     }
+
+    // Calculate total value
+    const total = parseInt(quantity) * (currentPrice || 0);
+
+    // Store order details for confirmation
+    setPendingOrderType(type);
+    setOrderQuantity(quantity);
+    setTotalOrderValue(total);
+    setShowConfirmation(true);
+  };
+
+  // This function will be called after confirmation
+  const placeOrder = async () => {
+    if (!pendingOrderType || !orderQuantity || !stockSymbol) return;
+
+    setIsPlacingOrder(true);
     try {
       await api.post('/order/create', {
         symbol: stockSymbol,
-        numOfStocks: parseInt(quantity),
-        type: type
+        numOfStocks: parseInt(orderQuantity),
+        type: pendingOrderType
       });
-      alert('Order placed successfully!');
-      window.location.reload();
+
+      toast({
+        title: `${pendingOrderType} Order Successful`,
+        description: `${
+          pendingOrderType === 'BUY' ? 'Bought' : 'Sold'
+        } ${orderQuantity} shares of ${stockSymbol} at ₹${
+          currentPrice?.toFixed(2) || 0
+        }`,
+        variant: 'default'
+      });
+
+      // Reset confirmation state
+      setShowConfirmation(false);
+      setPendingOrderType(null);
+
+      // Close the modal
+      onClose();
     } catch (error) {
       console.error('Error placing order:', error);
-      alert(
-        error instanceof Error
-          ? error.message
-          : 'Failed to place order. Please try again.'
-      );
+      toast({
+        title: 'Error',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to place order. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsPlacingOrder(false);
     }
   };
 
@@ -540,13 +599,13 @@ export function StockDetailsModal({
             <div className="mt-3 flex gap-2">
               <Button
                 className="h-8 flex-1 bg-green-600 text-xs hover:bg-green-700"
-                onClick={() => placeOrder('BUY')}
+                onClick={() => initiateOrder('BUY')}
               >
                 Buy
               </Button>
               <Button
                 className="h-8 flex-1 bg-red-600 text-xs hover:bg-red-700"
-                onClick={() => placeOrder('SELL')}
+                onClick={() => initiateOrder('SELL')}
               >
                 Sell
               </Button>
@@ -754,13 +813,13 @@ export function StockDetailsModal({
               <div className="mt-4 flex gap-2">
                 <Button
                   className="flex-1 bg-green-600 hover:bg-green-700"
-                  onClick={() => placeOrder('BUY')}
+                  onClick={() => initiateOrder('BUY')}
                 >
                   Buy
                 </Button>
                 <Button
                   className="flex-1 bg-red-600 hover:bg-red-700"
-                  onClick={() => placeOrder('SELL')}
+                  onClick={() => initiateOrder('SELL')}
                 >
                   Sell
                 </Button>
@@ -1121,6 +1180,13 @@ export function StockDetailsModal({
           </div>
         </div>
       </div>
+
+      <AlertModal
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        onConfirm={placeOrder}
+        loading={isPlacingOrder}
+      />
     </Modal>
   );
 }
