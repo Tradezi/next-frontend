@@ -2,7 +2,7 @@
 import { DashboardNav } from '@/components/dashboard-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { navItems } from '@/constants/data';
-import { MenuIcon, User, LogOut } from 'lucide-react';
+import { MenuIcon, User, LogOut, ChevronUp } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import Cookies from 'js-cookie';
@@ -29,6 +29,7 @@ interface UserData {
 export function MobileSidebar({ className }: SidebarProps) {
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     // First try to get user data from cookie
@@ -120,15 +121,27 @@ export function MobileSidebar({ className }: SidebarProps) {
             </div>
 
             {userData && (
-              <div className="mt-auto border-t p-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="flex w-full items-center">
-                    <User className="mr-2 h-5 w-5" />
-                    <div className="overflow-hidden text-sm">
-                      <p className="truncate font-medium">{userData.name}</p>
+              <div className="mt-auto px-3 py-2">
+                <DropdownMenu onOpenChange={setDropdownOpen}>
+                  <DropdownMenuTrigger className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <div className="flex items-center">
+                      <User className="mr-2 h-5 w-5" />
+                      <div className="overflow-hidden">
+                        <p className="truncate">{userData.name}</p>
+                      </div>
                     </div>
+                    <ChevronUp
+                      className={cn(
+                        'h-4 w-4 transition-transform duration-200',
+                        dropdownOpen && 'rotate-180'
+                      )}
+                    />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="center" sideOffset={10}>
+                  <DropdownMenuContent
+                    align="center"
+                    sideOffset={-75}
+                    className="w-[var(--radix-dropdown-menu-trigger-width)]"
+                  >
                     <DropdownMenuItem
                       onClick={handleLogout}
                       className="text-red-500"

@@ -3,7 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { DashboardNav } from '@/components/dashboard-nav';
 import { navItems } from '@/constants/data';
 import { cn } from '@/lib/utils';
-import { ChevronLeft, User, LogOut } from 'lucide-react';
+import {
+  ChevronLeft,
+  User,
+  LogOut,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
 import { useSidebar } from '@/hooks/useSidebar';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
@@ -28,6 +34,7 @@ interface UserData {
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     // First try to get user data from cookie
@@ -135,42 +142,41 @@ export default function Sidebar({ className }: SidebarProps) {
 
         {userData && (
           <div
-            className={cn(
-              'mt-auto border-t p-4',
-              isMinimized ? 'text-center' : 'px-4'
-            )}
+            className={cn('mt-auto', isMinimized ? 'px-2 py-3' : 'px-3 py-2')}
           >
             {isMinimized ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center justify-center">
-                  <User className="h-5 w-5 cursor-pointer" />
+              <DropdownMenu onOpenChange={setDropdownOpen}>
+                <DropdownMenuTrigger className="flex h-9 w-9 items-center justify-center rounded-md p-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                  <User className="h-5 w-5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" sideOffset={10}>
-                  <DropdownMenuItem className="text-sm font-medium">
-                    {userData.name}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="text-red-500"
-                  >
+                <DropdownMenuContent align="center">
+                  <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex w-full items-center">
-                  <User className="mr-2 h-5 w-5" />
-                  <div className="overflow-hidden text-sm">
-                    <p className="truncate font-medium">{userData.name}</p>
+              <DropdownMenu onOpenChange={setDropdownOpen}>
+                <DropdownMenuTrigger className="flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                  <div className="flex items-center">
+                    <User className="mr-2 h-5 w-5" />
+                    <div className="overflow-hidden">
+                      <p className="truncate">{userData.name}</p>
+                    </div>
                   </div>
+                  <ChevronUp
+                    className={cn(
+                      'h-4 w-4 transition-transform duration-200',
+                      dropdownOpen && 'rotate-180'
+                    )}
+                  />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" sideOffset={10}>
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="text-red-500"
-                  >
+                <DropdownMenuContent
+                  align="center"
+                  className="w-[var(--radix-dropdown-menu-trigger-width)]"
+                >
+                  <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
                   </DropdownMenuItem>
