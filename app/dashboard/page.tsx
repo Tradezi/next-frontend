@@ -301,17 +301,31 @@ export default function DashboardPage() {
         <div className="mt-6 overflow-x-auto">
           <div className="min-w-full px-4 sm:px-2">
             <div className="max-w-[calc(100vw-2rem)] md:max-w-none">
-              <DataTable
-                columns={columns}
-                data={orders}
-                searchKey="stockSymbol"
-                onRowClick={(order) => {
-                  setSelectedOrder(order);
-                  if (order) {
-                    fetchStockHistory(order.stockSymbol);
-                  }
-                }}
-              />
+              {orders.length === 0 ? (
+                <div className="flex min-h-[300px] w-full flex-col items-center justify-center rounded-md border border-border py-12 text-center">
+                  <p className="mb-4 text-lg text-muted-foreground">
+                    You don't have any stocks in your portfolio yet.
+                  </p>
+                  <Button
+                    onClick={() => (window.location.href = '/market')}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Go to Stock Market to Buy Stocks
+                  </Button>
+                </div>
+              ) : (
+                <DataTable
+                  columns={columns}
+                  data={orders}
+                  searchKey="stockSymbol"
+                  onRowClick={(order) => {
+                    setSelectedOrder(order);
+                    if (order) {
+                      fetchStockHistory(order.stockSymbol);
+                    }
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
