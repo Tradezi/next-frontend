@@ -310,7 +310,7 @@ export default function DashboardPage() {
                     onClick={() => (window.location.href = '/market')}
                     className="bg-primary hover:bg-primary/90"
                   >
-                    Go to Stock Market to Buy Stocks
+                    Explore the stock market
                   </Button>
                 </div>
               ) : (
