@@ -128,10 +128,8 @@ export default function DashboardPage() {
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
-        <div className="flex items-center justify-between px-4 md:px-2">
-          <h2 className="text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
-            Dashboard
-          </h2>
+        <div className="flex items-center justify-between px-2">
+          <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
         </div>
 
         <div className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-2 lg:grid-cols-4">

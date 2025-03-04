@@ -190,12 +190,12 @@ export default function MarketPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="space-y-4">
-        <div className="mb-4 flex items-center justify-between">
+      <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
+        <div className="mb-4 flex items-center justify-between px-2">
           <h2 className="text-2xl font-bold tracking-tight">Stock Market</h2>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 px-4 md:px-2">
           <DataTable
             columns={columns}
             data={stocks}
