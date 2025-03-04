@@ -317,7 +317,7 @@ export default function DashboardPage() {
               {orders.length === 0 ? (
                 <div className="flex min-h-[300px] w-full flex-col items-center justify-center rounded-md border border-border py-12 text-center">
                   <p className="mb-4 text-lg text-muted-foreground">
-                    You don't have any stocks in your portfolio yet.
+                    You don&apos;t have any stocks in your portfolio yet.
                   </p>
                   <Button
                     onClick={() => (window.location.href = '/market')}
