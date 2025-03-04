@@ -76,30 +76,28 @@ export default function DashboardPage() {
       });
   }, []);
 
-  useEffect(() => {
+  const fetchOrderTotals = async () => {
     setIsLoadingOrders(true);
-    api
-      .get('/order/user/total')
-      .then((response) => {
-        setOrders(response.data);
-        const total = response.data.reduce((sum: number, order: Order) => {
-          return sum + order.numOfStocks * order.stockPrice;
-        }, 0);
-        setInvestedAmount(total);
-        const currentPrice = response.data.reduce(
-          (sum: number, order: Order) => {
-            return sum + order.numOfStocks * order.currentPrice;
-          },
-          0
-        );
-        setCurrentPrice(currentPrice);
-      })
-      .catch((error) => {
-        console.error('Order totals error:', error);
-      })
-      .finally(() => {
-        setIsLoadingOrders(false);
-      });
+    try {
+      const response = await api.get('/order/user/total');
+      setOrders(response.data);
+      const total = response.data.reduce((sum: number, order: Order) => {
+        return sum + order.numOfStocks * order.stockPrice;
+      }, 0);
+      setInvestedAmount(total);
+      const currentPrice = response.data.reduce((sum: number, order: Order) => {
+        return sum + order.numOfStocks * order.currentPrice;
+      }, 0);
+      setCurrentPrice(currentPrice);
+    } catch (error) {
+      console.error('Order totals error:', error);
+    } finally {
+      setIsLoadingOrders(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrderTotals();
   }, []);
 
   const fetchStockHistory = async (symbol: string) => {
@@ -339,6 +337,7 @@ export default function DashboardPage() {
         onClose={() => {
           setSelectedOrder(null);
           setStockHistory([]);
+          fetchOrderTotals();
         }}
         stockSymbol={selectedOrder?.stockSymbol}
         currentPrice={selectedOrder?.currentPrice}
