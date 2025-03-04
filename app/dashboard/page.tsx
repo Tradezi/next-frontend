@@ -16,6 +16,7 @@ import dynamic from 'next/dynamic';
 import { StockDetailsModal } from '@/components/stock-details-modal';
 import { formatIndianNumber } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
+import Link from 'next/link';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface User {
@@ -57,6 +58,7 @@ export default function DashboardPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [stockHistory, setStockHistory] = useState<CandleData[]>([]);
   const [isLoadingChart, setIsLoadingChart] = useState(false);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(true);
 
   useEffect(() => {
     api
@@ -75,6 +77,7 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    setIsLoadingOrders(true);
     api
       .get('/order/user/total')
       .then((response) => {
@@ -93,6 +96,9 @@ export default function DashboardPage() {
       })
       .catch((error) => {
         console.error('Order totals error:', error);
+      })
+      .finally(() => {
+        setIsLoadingOrders(false);
       });
   }, []);
 
@@ -118,43 +124,6 @@ export default function DashboardPage() {
       setStockHistory([]);
     } finally {
       setIsLoadingChart(false);
-    }
-  };
-
-  const placeOrder = async (type: 'BUY' | 'SELL') => {
-    const quantity = (
-      document.getElementById('numOfStocks') as HTMLInputElement
-    ).value;
-    if (!selectedOrder?.stockSymbol || !quantity) {
-      toast({
-        title: 'Error',
-        description: 'Please enter quantity.',
-        variant: 'destructive'
-      });
-      return;
-    }
-    try {
-      await api.post('/order/create', {
-        symbol: selectedOrder.stockSymbol,
-        numOfStocks: parseInt(quantity),
-        type: type
-      });
-      toast({
-        title: 'Success',
-        description: 'Order placed successfully!',
-        variant: 'default'
-      });
-      window.location.reload();
-    } catch (error) {
-      console.error('Error placing order:', error);
-      toast({
-        title: 'Error',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'Failed to place order. Please try again.',
-        variant: 'destructive'
-      });
     }
   };
 
@@ -314,17 +283,38 @@ export default function DashboardPage() {
         <div className="mt-6 overflow-x-auto">
           <div className="min-w-full px-4 sm:px-2">
             <div className="max-w-[calc(100vw-2rem)] md:max-w-none">
-              {orders.length === 0 ? (
+              {isLoadingOrders ? (
+                <div className="w-full rounded-md border border-border">
+                  <div className="flex items-center justify-between border-b p-4">
+                    <Skeleton className="h-8 w-[200px]" />
+                    <Skeleton className="h-10 w-[250px]" />
+                  </div>
+                  <div className="p-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div
+                        key={i}
+                        className="flex justify-between border-b py-3 last:border-0"
+                      >
+                        <Skeleton className="h-6 w-[120px]" />
+                        <Skeleton className="h-6 w-[80px]" />
+                        <Skeleton className="h-6 w-[100px]" />
+                        <Skeleton className="h-6 w-[90px]" />
+                        <Skeleton className="h-6 w-[70px]" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : orders.length === 0 ? (
                 <div className="flex min-h-[300px] w-full flex-col items-center justify-center rounded-md border border-border py-12 text-center">
                   <p className="mb-4 text-lg text-muted-foreground">
                     You don&apos;t have any stocks in your portfolio yet.
                   </p>
-                  <Button
-                    onClick={() => (window.location.href = '/market')}
-                    className="bg-primary hover:bg-primary/90"
+                  <Link
+                    href="/market"
+                    className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                   >
                     Explore the stock market
-                  </Button>
+                  </Link>
                 </div>
               ) : (
                 <DataTable
