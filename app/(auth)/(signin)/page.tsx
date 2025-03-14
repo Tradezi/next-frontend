@@ -6,6 +6,15 @@ import { cookies } from 'next/headers';
 import UserAuthForm from '@/components/forms/user-auth-form';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import {
+  MotionLogo,
+  MotionContainer,
+  MotionItem,
+  MotionFormContainer,
+  MotionHeading,
+  MotionForm,
+  MotionText
+} from '@/components/animations/motion-wrapper';
 
 export const metadata: Metadata = {
   title: 'Sign In | Tradezi',
@@ -44,7 +53,7 @@ export default async function AuthenticationPage() {
   return (
     <div className="relative flex min-h-screen flex-col lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <div className="relative flex h-[50vh] w-full flex-col bg-zinc-900 text-white lg:h-full dark:border-r">
-        <div className="relative z-20 flex h-[15vh] w-full items-center justify-center px-4 pt-8 sm:pt-10 lg:h-auto lg:items-start lg:justify-start lg:p-10">
+        <MotionLogo className="relative z-20 flex h-[15vh] w-full items-center justify-center px-4 pt-8 sm:pt-10 lg:h-auto lg:items-start lg:justify-start lg:p-10">
           <div className="flex items-center text-lg font-medium lg:mt-8">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -60,37 +69,37 @@ export default async function AuthenticationPage() {
             </svg>
             <span className="text-2xl sm:text-3xl lg:text-3xl">Tradezi</span>
           </div>
-        </div>
+        </MotionLogo>
         <div className="relative z-20 flex flex-1 flex-col lg:items-start lg:justify-center ">
-          <div className="px-6 pb-8 pt-16 sm:pt-20 lg:px-16 lg:py-0">
+          <MotionContainer className="px-6 pb-8 pt-16 sm:pt-20 lg:px-16 lg:py-0">
             <div className="space-y-4 text-center lg:-mt-[100px] lg:text-left">
-              <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-5xl">
+              <MotionItem className="text-2xl font-bold tracking-tight text-white sm:text-3xl lg:text-5xl">
                 Trade Easy, <br />
                 Risk-Free
-              </h2>
-              <p className="text-base text-zinc-300 sm:text-lg lg:text-2xl">
+              </MotionItem>
+              <MotionItem className="text-base text-zinc-300 sm:text-lg lg:text-2xl">
                 Master real stock market trading with virtual money.
                 <br />
                 Experience live market conditions... <br />
                 ...without risking your capital.
-              </p>
+              </MotionItem>
             </div>
-          </div>
+          </MotionContainer>
         </div>
       </div>
 
       <div className="flex h-[50vh] flex-col lg:mt-[100px] lg:flex lg:h-[calc(100vh-140px)]">
-        <div className="flex flex-1 items-center px-4 py-12 sm:px-8 sm:py-16 lg:flex lg:items-center lg:justify-center lg:p-12 ">
+        <MotionFormContainer className="flex flex-1 items-center px-4 py-12 sm:px-8 sm:py-16 lg:flex lg:items-center lg:justify-center lg:p-12">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:max-w-[400px] lg:max-w-[450px]">
-            <div className="flex flex-col space-y-2 text-center">
+            <MotionHeading className="flex flex-col space-y-2 text-center">
               <h1 className="text-xl font-semibold tracking-tight sm:text-2xl lg:text-3xl">
                 Get Started
               </h1>
-            </div>
-            <div className="w-full">
+            </MotionHeading>
+            <MotionForm className="w-full">
               <UserAuthForm />
-            </div>
-            <p className="px-2 text-center text-xs text-muted-foreground sm:text-sm lg:text-base">
+            </MotionForm>
+            <MotionText className="px-2 text-center text-xs text-muted-foreground sm:text-sm lg:text-base">
               By clicking continue, you agree to our{' '}
               <Link
                 href="/terms"
@@ -106,9 +115,9 @@ export default async function AuthenticationPage() {
                 Privacy Policy
               </Link>
               .
-            </p>
+            </MotionText>
           </div>
-        </div>
+        </MotionFormContainer>
       </div>
     </div>
   );
