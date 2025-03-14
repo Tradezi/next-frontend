@@ -17,6 +17,15 @@ import { StockDetailsModal } from '@/components/stock-details-modal';
 import { formatIndianNumber } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 import Link from 'next/link';
+import {
+  MotionContainer,
+  MotionItem,
+  MotionHeading,
+  MotionText,
+  MotionTableContainer,
+  MotionEmptyState,
+  MotionButton
+} from '@/components/animations/motion-wrapper';
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 interface User {
@@ -128,155 +137,163 @@ export default function DashboardPage() {
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
-        <div className="flex items-center justify-between px-2">
+        <MotionHeading className="flex items-center justify-between px-2">
           <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
-        </div>
+        </MotionHeading>
 
-        <div className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-2 lg:grid-cols-4">
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-medium sm:text-sm">
-                Invested Amount
-              </CardTitle>
-              <svg
-                fill="currentColor"
-                viewBox="-96 0 512 512"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <g id="SVGRepo_iconCarrier">
-                  <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
-                </g>
-              </svg>
-            </CardHeader>
-            <CardContent>
-              {investedAmount !== undefined ? (
-                <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-                  ₹{formatIndianNumber(investedAmount)}
-                </div>
-              ) : (
-                <Skeleton className="h-8 w-[120px]" />
-              )}
-              <p className="text-xs text-muted-foreground md:text-sm">
-                Total amount invested
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-medium sm:text-sm">
-                Current Value
-              </CardTitle>
-              <svg
-                fill="currentColor"
-                viewBox="-96 0 512 512"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <g id="SVGRepo_iconCarrier">
-                  <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
-                </g>
-              </svg>
-            </CardHeader>
-            <CardContent>
-              {currentPrice !== undefined ? (
-                <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-                  ₹{formatIndianNumber(currentPrice)}
-                </div>
-              ) : (
-                <Skeleton className="h-8 w-[120px]" />
-              )}
-              <p className="text-xs text-muted-foreground md:text-sm">
-                Current portfolio value
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-medium sm:text-sm">
-                Profit/Loss
-              </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              {currentPrice !== undefined && investedAmount !== undefined ? (
-                <>
-                  <div
-                    className={`truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl ${
-                      currentPrice >= investedAmount
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    }`}
-                  >
-                    {currentPrice >= investedAmount ? `+` : `-`}₹
-                    {formatIndianNumber(
-                      Math.abs(currentPrice - investedAmount)
-                    )}
+        <MotionContainer className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-2 lg:grid-cols-4">
+          <MotionItem className="overflow-hidden">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-xs font-medium sm:text-sm">
+                  Invested Amount
+                </CardTitle>
+                <svg
+                  fill="currentColor"
+                  viewBox="-96 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-muted-foreground"
+                >
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
+                  </g>
+                </svg>
+              </CardHeader>
+              <CardContent>
+                {investedAmount !== undefined ? (
+                  <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
+                    ₹{formatIndianNumber(investedAmount)}
                   </div>
-                  <p className="text-xs text-muted-foreground md:text-sm">
-                    {currentPrice >= investedAmount ? `+` : `-`}
-                    {isNaN(
-                      ((currentPrice - investedAmount) / investedAmount) * 100
-                    )
-                      ? '0.00'
-                      : Math.abs(
-                          ((currentPrice - investedAmount) / investedAmount) *
-                            100
-                        ).toFixed(2)}
-                    % overall return
-                  </p>
-                </>
-              ) : (
-                <>
+                ) : (
                   <Skeleton className="h-8 w-[120px]" />
-                  <Skeleton className="mt-1 h-4 w-[80px]" />
-                </>
-              )}
-            </CardContent>
-          </Card>
-          <Card className="overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-xs font-medium sm:text-sm">
-                Balance
-              </CardTitle>
-              <svg
-                fill="currentColor"
-                viewBox="-96 0 512 512"
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <g id="SVGRepo_iconCarrier">
-                  <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
-                </g>
-              </svg>
-            </CardHeader>
-            <CardContent>
-              {user ? (
-                <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-                  ₹{formatIndianNumber(user.balance)}
-                </div>
-              ) : (
-                <Skeleton className="h-8 w-[120px]" />
-              )}
-              <p className="text-xs text-muted-foreground md:text-sm">
-                Current account balance
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+                )}
+                <p className="text-xs text-muted-foreground md:text-sm">
+                  Total amount invested
+                </p>
+              </CardContent>
+            </Card>
+          </MotionItem>
+          <MotionItem className="overflow-hidden">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-xs font-medium sm:text-sm">
+                  Current Value
+                </CardTitle>
+                <svg
+                  fill="currentColor"
+                  viewBox="-96 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-muted-foreground"
+                >
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
+                  </g>
+                </svg>
+              </CardHeader>
+              <CardContent>
+                {currentPrice !== undefined ? (
+                  <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
+                    ₹{formatIndianNumber(currentPrice)}
+                  </div>
+                ) : (
+                  <Skeleton className="h-8 w-[120px]" />
+                )}
+                <p className="text-xs text-muted-foreground md:text-sm">
+                  Current portfolio value
+                </p>
+              </CardContent>
+            </Card>
+          </MotionItem>
+          <MotionItem className="overflow-hidden">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-xs font-medium sm:text-sm">
+                  Profit/Loss
+                </CardTitle>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  className="h-4 w-4 text-muted-foreground"
+                >
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+              </CardHeader>
+              <CardContent>
+                {currentPrice !== undefined && investedAmount !== undefined ? (
+                  <>
+                    <div
+                      className={`truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl ${
+                        currentPrice >= investedAmount
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}
+                    >
+                      {currentPrice >= investedAmount ? `+` : `-`}₹
+                      {formatIndianNumber(
+                        Math.abs(currentPrice - investedAmount)
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground md:text-sm">
+                      {currentPrice >= investedAmount ? `+` : `-`}
+                      {isNaN(
+                        ((currentPrice - investedAmount) / investedAmount) * 100
+                      )
+                        ? '0.00'
+                        : Math.abs(
+                            ((currentPrice - investedAmount) / investedAmount) *
+                              100
+                          ).toFixed(2)}
+                      % overall return
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Skeleton className="h-8 w-[120px]" />
+                    <Skeleton className="mt-1 h-4 w-[80px]" />
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </MotionItem>
+          <MotionItem className="overflow-hidden">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-xs font-medium sm:text-sm">
+                  Balance
+                </CardTitle>
+                <svg
+                  fill="currentColor"
+                  viewBox="-96 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-muted-foreground"
+                >
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
+                  </g>
+                </svg>
+              </CardHeader>
+              <CardContent>
+                {user ? (
+                  <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
+                    ₹{formatIndianNumber(user.balance)}
+                  </div>
+                ) : (
+                  <Skeleton className="h-8 w-[120px]" />
+                )}
+                <p className="text-xs text-muted-foreground md:text-sm">
+                  Current account balance
+                </p>
+              </CardContent>
+            </Card>
+          </MotionItem>
+        </MotionContainer>
 
-        <div className="mt-6 overflow-x-auto">
+        <MotionTableContainer className="mt-6 overflow-x-auto">
           <div className="min-w-full px-4 sm:px-2">
             <div className="max-w-[calc(100vw-2rem)] md:max-w-none">
               {isLoadingOrders ? (
@@ -301,17 +318,19 @@ export default function DashboardPage() {
                   </div>
                 </div>
               ) : orders.length === 0 ? (
-                <div className="flex min-h-[300px] w-full flex-col items-center justify-center rounded-md border border-border py-12 text-center">
-                  <p className="mb-4 text-lg text-muted-foreground">
+                <MotionEmptyState className="flex min-h-[300px] w-full flex-col items-center justify-center rounded-md border border-border py-12 text-center">
+                  <MotionText className="mb-4 text-lg text-muted-foreground">
                     You don&apos;t have any stocks in your portfolio yet.
-                  </p>
-                  <Link
-                    href="/market"
-                    className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-                  >
-                    Explore the stock market
-                  </Link>
-                </div>
+                  </MotionText>
+                  <MotionButton>
+                    <Link
+                      href="/market"
+                      className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    >
+                      Explore the stock market
+                    </Link>
+                  </MotionButton>
+                </MotionEmptyState>
               ) : (
                 <DataTable
                   columns={columns}
@@ -327,7 +346,7 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-        </div>
+        </MotionTableContainer>
       </div>
 
       <StockDetailsModal
