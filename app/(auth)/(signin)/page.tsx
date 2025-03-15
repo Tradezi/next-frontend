@@ -145,7 +145,7 @@ export default async function AuthenticationPage() {
       {/* Main content - Full height */}
       <MotionScrollToSection
         id="main"
-        className="relative flex min-h-[calc(100vh-64px)] flex-col pt-0 lg:min-h-screen lg:flex-row"
+        className="relative flex min-h-[calc(100vh-64px)] flex-col pt-0 lg:h-full lg:flex-row"
         skipFirstScroll={true}
       >
         {/* Hero Section */}
