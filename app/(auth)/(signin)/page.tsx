@@ -59,11 +59,11 @@ export default async function AuthenticationPage() {
   return (
     <div className="flex flex-col overflow-auto">
       {/* Navbar with split background */}
-      <nav className="relative z-20">
+      <nav className="z-20">
         {/* Mobile and iPad Navbar - Single row with split background */}
-        <div className="flex items-center bg-muted lg:hidden">
+        <div className="fixed flex w-full items-center bg-muted shadow-md lg:hidden">
           {/* Left side - Logo with dark background */}
-          <div className="w-3/4  px-4 py-4 text-white">
+          <div className="w-3/4 px-4 py-4 text-white">
             <div className="flex items-center text-lg font-medium">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -139,13 +139,17 @@ export default async function AuthenticationPage() {
         </div>
       </nav>
 
+      {/* Empty div to create space for fixed navbar on mobile */}
+      <div className="h-[64px] lg:hidden"></div>
+
       {/* Main content - Full height */}
       <MotionScrollToSection
         id="main"
-        className="relative flex h-[calc(100vh-64px)] flex-col lg:min-h-screen lg:flex-row"
+        className="relative flex min-h-[calc(100vh-64px)] flex-col pt-0 lg:min-h-screen lg:flex-row"
+        skipFirstScroll={true}
       >
         {/* Hero Section */}
-        <div className="flex w-full flex-1 items-center bg-muted py-6 text-white md:py-0">
+        <div className="flex w-full flex-1 items-center bg-muted py-8 text-white md:py-12">
           <MotionContainer className="container mx-auto px-6 md:px-12">
             <div className="mx-auto max-w-3xl space-y-4 md:space-y-6">
               <MotionItem className="text-2xl font-bold tracking-tight text-white md:text-4xl">
@@ -162,10 +166,10 @@ export default async function AuthenticationPage() {
         </div>
 
         {/* Get Started Section */}
-        <div className="flex w-full flex-1 items-center bg-background py-6 md:py-0">
+        <div className="flex w-full flex-1 items-center bg-background py-8 md:py-12">
           <MotionFormContainer className="container mx-auto px-6 md:px-12">
             <div className="mx-auto max-w-md">
-              <MotionHeading className="mb-8 flex flex-col space-y-2 text-center">
+              <MotionHeading className="mb-6 flex flex-col space-y-2 text-center md:mb-8">
                 <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
                   Get Started
                 </h1>
@@ -173,7 +177,7 @@ export default async function AuthenticationPage() {
               <MotionForm>
                 <UserAuthForm />
               </MotionForm>
-              <MotionText className="mt-6 text-center text-sm text-muted-foreground">
+              <MotionText className="mt-4 text-center text-sm text-muted-foreground md:mt-6">
                 By clicking continue, you agree to our{' '}
                 <Link
                   href="/terms"
@@ -195,7 +199,7 @@ export default async function AuthenticationPage() {
         </div>
 
         {/* Scroll indicator - Using Framer Motion with auto-fade */}
-        <MotionScrollIndicator className="fixed bottom-6 right-6 z-30 flex animate-bounce items-center">
+        <MotionScrollIndicator className="fixed bottom-6 right-6 z-10 flex animate-bounce items-center">
           <a
             href="#features"
             className="rounded-full bg-background/80 px-4 py-2 shadow-md backdrop-blur-sm"
@@ -225,7 +229,8 @@ export default async function AuthenticationPage() {
       {/* Features Section */}
       <MotionScrollToSection
         id="features"
-        className="bg-gradient-to-r from-background to-muted py-24"
+        className="bg-gradient-to-r from-background  to-muted py-24 md:py-24"
+        skipFirstScroll={false}
       >
         <div className="container mx-auto px-4">
           <div className="mb-16 text-center">

@@ -231,20 +231,55 @@ export function MotionScrollToSection({
   children,
   className,
   id,
-  threshold = 0.3
+  threshold = 0.1,
+  skipFirstScroll = false
 }: {
   children: ReactNode;
   className?: string;
   id: string;
   threshold?: number;
+  skipFirstScroll?: boolean;
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, {
-    once: false
+    once: false,
+    amount: threshold,
+    initial: false
   });
+  // Add a ref to track if this is the first time the component is in view
+  const isFirstRender = useRef(true);
+  // Add state to track window width
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  // Check screen size on mount and when window resizes
+  useEffect(() => {
+    // Function to check if we're on a large screen (using lg breakpoint from Tailwind - 1024px)
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024);
+    };
+
+    // Check on mount
+    checkScreenSize();
+
+    // Add resize listener
+    window.addEventListener('resize', checkScreenSize);
+
+    // Clean up
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
+    // Skip scrolling if on large screens
+    if (isLargeScreen) return;
+
     if (isInView) {
+      // Check if we should skip the first scroll
+      if (skipFirstScroll && isFirstRender.current) {
+        // Mark that we've seen the first render
+        isFirstRender.current = false;
+        return;
+      }
+
       // Scroll to the section with smooth animation when it comes into view
       const element = document.getElementById(id);
       if (element) {
@@ -256,8 +291,13 @@ export function MotionScrollToSection({
           });
         }, 100);
       }
+
+      // If this was the first render, mark it as seen
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+      }
     }
-  }, [isInView, id]);
+  }, [isInView, id, skipFirstScroll, isLargeScreen]);
 
   return (
     <motion.section
