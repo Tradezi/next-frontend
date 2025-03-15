@@ -141,7 +141,108 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
         </MotionHeading>
 
-        <MotionContainer className="mx-auto grid grid-cols-1 gap-4 px-4 sm:w-full md:grid-cols-2 md:px-2 lg:grid-cols-4">
+        {/* Mobile Card - Only visible on small screens */}
+        <div className="block md:hidden">
+          <Card className="mx-4 overflow-hidden">
+            <CardContent className="p-4">
+              <div className="flex flex-col space-y-0">
+                {/* First Row - Total Invested and Current Value */}
+                <div className="grid grid-cols-2 gap-2 pb-2">
+                  {/* Total Invested */}
+                  <div>
+                    <h3 className="text-sm font-medium">Total Invested</h3>
+                    {investedAmount !== undefined ? (
+                      <div className="truncate text-base font-bold">
+                        ₹{formatIndianNumber(investedAmount)}
+                      </div>
+                    ) : (
+                      <Skeleton className="h-6 w-[100px]" />
+                    )}
+                  </div>
+
+                  {/* Current Value */}
+                  <div>
+                    <h3 className="text-right text-sm font-medium">
+                      Current Value
+                    </h3>
+                    {currentPrice !== undefined ? (
+                      <div className="truncate text-right text-base font-bold">
+                        ₹{formatIndianNumber(currentPrice)}
+                      </div>
+                    ) : (
+                      <Skeleton className="ml-auto h-6 w-[100px]" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Horizontal Rule */}
+                <div className="h-px bg-border" />
+
+                {/* Second Row - P&L with Value and Percentage */}
+                <div className="flex flex-row items-start justify-between pt-2">
+                  <h3 className="text-sm font-medium">P&L</h3>
+                  {currentPrice !== undefined &&
+                  investedAmount !== undefined ? (
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className={`truncate text-base font-bold ${
+                          currentPrice >= investedAmount
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}
+                      >
+                        {currentPrice >= investedAmount ? `+` : `-`}₹
+                        {formatIndianNumber(
+                          Math.abs(currentPrice - investedAmount)
+                        )}
+                      </div>
+                      <div
+                        className={`truncate text-sm font-medium ${
+                          currentPrice >= investedAmount
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}
+                      >
+                        ({currentPrice >= investedAmount ? `+` : `-`}
+                        {isNaN(
+                          ((currentPrice - investedAmount) / investedAmount) *
+                            100
+                        )
+                          ? '0.00'
+                          : Math.abs(
+                              ((currentPrice - investedAmount) /
+                                investedAmount) *
+                                100
+                            ).toFixed(2)}
+                        %)
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <Skeleton className="h-6 w-[100px]" />
+                      <Skeleton className="h-5 w-[60px]" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Third Row - Funds */}
+                <div className="flex flex-row items-start justify-between">
+                  <h3 className="text-sm font-medium">Funds</h3>
+                  {user ? (
+                    <div className="truncate text-base font-bold">
+                      ₹{formatIndianNumber(user.balance)}
+                    </div>
+                  ) : (
+                    <Skeleton className="h-6 w-[100px]" />
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Desktop Cards - Only visible on medium and larger screens */}
+        <MotionContainer className="mx-auto hidden grid-cols-1 gap-4 px-4 sm:w-full md:grid md:grid-cols-2 md:px-2 lg:grid-cols-4">
           <MotionItem className="overflow-hidden">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
