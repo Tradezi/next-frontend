@@ -23,7 +23,7 @@ const MarketSentiment = ({ children, ...props }: Props) => {
   const prices = props.data.data;
   const name = props.data.name;
   if (prices.length < 2) {
-    return;
+    return 'Not enough data to determine trend';
   }
 
   // Sort by date in ascending order
@@ -53,7 +53,7 @@ const MarketSentiment = ({ children, ...props }: Props) => {
   const isNegative = absoluteDifference < 0;
 
   return (
-    <div className="m-2 flex flex-nowrap items-center space-x-2 rounded-lg border p-3 shadow-md md:space-x-4 md:p-4 md:text-xl">
+    <div className="mx-2 flex flex-nowrap items-center space-x-2 rounded-lg border p-3 shadow-md md:space-x-4 md:p-4 md:text-xl">
       <span className="md:text-md text-nowrap text-sm">
         {name}: <span className="font-semibold ">{latestPrice}</span>
       </span>
