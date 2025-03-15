@@ -70,14 +70,14 @@ export default function Header() {
               Tradezi
             </span>
           </div>
-          <div className="mx-4 justify-self-end">
+          <div className="justify-self-end">
             <div className={cn('block xl:hidden')}>
               <MobileSidebar />
             </div>
           </div>
         </div>
         <div className="flex w-full items-center justify-center gap-2 py-1">
-          <ScrollArea className="w-full justify-self-start whitespace-nowrap">
+          <ScrollArea className="scrollbar-none w-full justify-self-start whitespace-nowrap">
             <div className="flex w-96 flex-row space-x-4 px-2 md:w-full md:justify-center">
               <div className="flex flex-row ">
                 {stockIndexes.map((stock, index) => (

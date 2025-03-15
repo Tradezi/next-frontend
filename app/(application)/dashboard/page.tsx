@@ -136,7 +136,7 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="sm:p-4 md:space-y-4 md:p-8 lg:p-2">
+      <div className="py-1 sm:px-4 md:space-y-4 md:p-8 lg:p-2">
         <MotionHeading className="flex items-center justify-between px-2">
           <h2 className="hidden text-2xl font-bold tracking-tight md:block">
             Dashboard
