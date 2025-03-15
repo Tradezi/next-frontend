@@ -47,7 +47,7 @@ export default function Header() {
 
   return (
     <header className="sticky inset-x-0 top-0 w-full">
-      <nav className="flex flex-col px-2 py-2">
+      <nav className="flex flex-col px-3 py-3">
         <div
           className={cn(
             'block flex w-full flex-row justify-between px-4 py-2 xl:hidden'
@@ -77,9 +77,9 @@ export default function Header() {
           </div>
         </div>
         <div className="flex w-full items-center justify-center gap-2 py-1">
-          <ScrollArea className="scrollbar-none w-full justify-self-start whitespace-nowrap">
-            <div className="flex w-96 flex-row space-x-4 px-2 md:w-full md:justify-center">
-              <div className="flex flex-row ">
+          <ScrollArea className="no-scrollbar w-full justify-self-start whitespace-nowrap ">
+            <div className="scrolling-mobile md:scrolldesktop flex w-96 flex-row space-x-4 px-2 md:w-full md:justify-center">
+              <div className="flex flex-row">
                 {stockIndexes.map((stock, index) => (
                   <MarketSentiment key={index} data={stock} />
                 ))}

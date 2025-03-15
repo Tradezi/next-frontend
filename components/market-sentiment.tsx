@@ -53,7 +53,7 @@ const MarketSentiment = ({ children, ...props }: Props) => {
   const isNegative = absoluteDifference < 0;
 
   return (
-    <div className="mx-2 flex flex-nowrap items-center space-x-2 rounded-lg border p-3 shadow-md md:space-x-4 md:p-4 md:text-xl">
+    <div className="mx-2 flex flex-nowrap items-center space-x-2 px-3 py-1 shadow-md md:space-x-4 md:p-4 md:text-xl">
       <span className="md:text-md text-nowrap text-sm">
         {name}: <span className="font-semibold ">{latestPrice}</span>
       </span>
