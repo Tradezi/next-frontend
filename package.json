@@ -1,10 +1,10 @@
 {
-  "name": "nextshcdndashboardstarter",
+  "name": "tradezi",
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name": "Kiran",
-    "url": "https://github.com/Kiranism"
+    "name": "Advait, Ronak, Arvind",
+    "url": "https://github.com/advait-l"
   },
   "scripts": {
     "dev": "next dev",

@@ -3,8 +3,16 @@
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import PageContainer from '@/components/layout/page-container';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@/components/cards/card';
+import { MobileCard } from '@/components/cards/mobile-card';
+import { WebCard } from '@/components/cards/web-card';
 import { DataTable } from '@/components/ui/data-table';
+import { OrderCardList } from '@/components/cards/order-card-list';
 import { columns, Order } from './columns';
 import { Skeleton } from '@/components/ui/skeleton';
 import axios from 'axios';
@@ -136,267 +144,116 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="py-1 sm:px-4 md:space-y-4 md:p-8 lg:p-2">
+      <div className="sm:px-4 md:space-y-4 md:p-8 lg:p-2">
         <MotionHeading className="flex items-center justify-between px-2">
           <h2 className="hidden text-2xl font-bold tracking-tight md:block">
             Dashboard
           </h2>
         </MotionHeading>
 
-        {/* Mobile Card - Only visible on small screens */}
-        <div className="block md:hidden">
-          <Card className="mx-4 overflow-hidden">
-            <CardContent className="p-4">
-              <div className="flex flex-col space-y-0">
-                {/* First Row - Total Invested and Current Value */}
-                <div className="grid grid-cols-2 gap-2 pb-2">
-                  {/* Total Invested */}
-                  <div>
-                    <h3 className="text-sm font-medium">Total Invested</h3>
-                    {investedAmount !== undefined ? (
-                      <div className="truncate text-base font-bold">
-                        ₹{formatIndianNumber(investedAmount)}
-                      </div>
-                    ) : (
-                      <Skeleton className="h-6 w-[100px]" />
-                    )}
-                  </div>
-
-                  {/* Current Value */}
-                  <div>
-                    <h3 className="text-right text-sm font-medium">
-                      Current Value
-                    </h3>
-                    {currentPrice !== undefined ? (
-                      <div className="truncate text-right text-base font-bold">
-                        ₹{formatIndianNumber(currentPrice)}
-                      </div>
-                    ) : (
-                      <Skeleton className="ml-auto h-6 w-[100px]" />
-                    )}
-                  </div>
-                </div>
-
-                {/* Horizontal Rule */}
-                <div className="h-px bg-border" />
-
-                {/* Second Row - P&L with Value and Percentage */}
-                <div className="flex flex-row items-start justify-between pt-2">
-                  <h3 className="text-sm font-medium">P&L</h3>
-                  {currentPrice !== undefined &&
-                  investedAmount !== undefined ? (
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className={`truncate text-base font-bold ${
-                          currentPrice >= investedAmount
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}
-                      >
-                        {currentPrice >= investedAmount ? `+` : `-`}₹
-                        {formatIndianNumber(
-                          Math.abs(currentPrice - investedAmount)
-                        )}
-                      </div>
-                      <div
-                        className={`truncate text-sm font-medium ${
-                          currentPrice >= investedAmount
-                            ? 'text-green-600'
-                            : 'text-red-600'
-                        }`}
-                      >
-                        ({currentPrice >= investedAmount ? `+` : `-`}
-                        {isNaN(
-                          ((currentPrice - investedAmount) / investedAmount) *
-                            100
-                        )
-                          ? '0.00'
-                          : Math.abs(
-                              ((currentPrice - investedAmount) /
-                                investedAmount) *
-                                100
-                            ).toFixed(2)}
-                        %)
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-2">
-                      <Skeleton className="h-6 w-[100px]" />
-                      <Skeleton className="h-5 w-[60px]" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Third Row - Funds */}
-                <div className="flex flex-row items-start justify-between">
-                  <h3 className="text-sm font-medium">Funds</h3>
-                  {user ? (
-                    <div className="truncate text-base font-bold">
-                      ₹{formatIndianNumber(user.balance)}
-                    </div>
-                  ) : (
-                    <Skeleton className="h-6 w-[100px]" />
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Mobile View Container - Only visible on small screens */}
+        <div className="flex h-[calc(100vh-16rem)] w-full flex-col items-center justify-center gap-2 p-2  md:hidden ">
+          <MobileCard
+            investedAmount={investedAmount}
+            currentPrice={currentPrice}
+            pnlValue={investedAmount - currentPrice}
+            pnlPercentage={
+              ((investedAmount - currentPrice) / investedAmount) * 100
+            }
+            userBalance={user?.balance}
+          />
+          <div className="h-full min-h-0 w-full flex-1">
+            <OrderCardList
+              orders={orders}
+              isLoading={isLoadingOrders}
+              onOrderClick={(order) => {
+                setSelectedOrder(order);
+                if (order) {
+                  fetchStockHistory(order.stockSymbol);
+                }
+              }}
+            />
+          </div>
         </div>
 
         {/* Desktop Cards - Only visible on medium and larger screens */}
         <MotionContainer className="mx-auto hidden grid-cols-1 gap-4 px-4 sm:w-full md:grid md:grid-cols-2 md:px-2 lg:grid-cols-4">
           <MotionItem className="overflow-hidden">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-medium sm:text-sm">
-                  Invested Amount
-                </CardTitle>
+            <WebCard
+              title="Invested Amount"
+              value={investedAmount}
+              description="Total amount invested"
+              icon={
                 <svg
                   fill="currentColor"
                   viewBox="-96 0 512 512"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-muted-foreground"
                 >
                   <g id="SVGRepo_iconCarrier">
                     <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
                   </g>
                 </svg>
-              </CardHeader>
-              <CardContent>
-                {investedAmount !== undefined ? (
-                  <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-                    ₹{formatIndianNumber(investedAmount)}
-                  </div>
-                ) : (
-                  <Skeleton className="h-8 w-[120px]" />
-                )}
-                <p className="text-xs text-muted-foreground md:text-sm">
-                  Total amount invested
-                </p>
-              </CardContent>
-            </Card>
+              }
+            />
           </MotionItem>
           <MotionItem className="overflow-hidden">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-medium sm:text-sm">
-                  Current Value
-                </CardTitle>
+            <WebCard
+              title="Current Value"
+              value={currentPrice}
+              description="Current portfolio value"
+              icon={
                 <svg
                   fill="currentColor"
                   viewBox="-96 0 512 512"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-muted-foreground"
                 >
                   <g id="SVGRepo_iconCarrier">
                     <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
                   </g>
                 </svg>
-              </CardHeader>
-              <CardContent>
-                {currentPrice !== undefined ? (
-                  <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-                    ₹{formatIndianNumber(currentPrice)}
-                  </div>
-                ) : (
-                  <Skeleton className="h-8 w-[120px]" />
-                )}
-                <p className="text-xs text-muted-foreground md:text-sm">
-                  Current portfolio value
-                </p>
-              </CardContent>
-            </Card>
+              }
+            />
           </MotionItem>
           <MotionItem className="overflow-hidden">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-medium sm:text-sm">
-                  Profit/Loss
-                </CardTitle>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
-                >
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                </svg>
-              </CardHeader>
-              <CardContent>
-                {currentPrice !== undefined && investedAmount !== undefined ? (
-                  <>
-                    <div
-                      className={`truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl ${
-                        currentPrice >= investedAmount
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }`}
-                    >
-                      {currentPrice >= investedAmount ? `+` : `-`}₹
-                      {formatIndianNumber(
-                        Math.abs(currentPrice - investedAmount)
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground md:text-sm">
-                      {currentPrice >= investedAmount ? `+` : `-`}
-                      {isNaN(
-                        ((currentPrice - investedAmount) / investedAmount) * 100
-                      )
-                        ? '0.00'
-                        : Math.abs(
-                            ((currentPrice - investedAmount) / investedAmount) *
-                              100
-                          ).toFixed(2)}
-                      % overall return
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <Skeleton className="h-8 w-[120px]" />
-                    <Skeleton className="mt-1 h-4 w-[80px]" />
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </MotionItem>
-          <MotionItem className="overflow-hidden">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-medium sm:text-sm">
-                  Balance
-                </CardTitle>
+            <WebCard
+              title="P&L"
+              value={investedAmount - currentPrice}
+              description="Profit and Loss"
+              icon={
                 <svg
                   fill="currentColor"
                   viewBox="-96 0 512 512"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4 text-muted-foreground"
                 >
                   <g id="SVGRepo_iconCarrier">
                     <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
                   </g>
                 </svg>
-              </CardHeader>
-              <CardContent>
-                {user ? (
-                  <div className="truncate text-base font-bold sm:text-lg md:text-xl lg:text-2xl">
-                    ₹{formatIndianNumber(user.balance)}
-                  </div>
-                ) : (
-                  <Skeleton className="h-8 w-[120px]" />
-                )}
-                <p className="text-xs text-muted-foreground md:text-sm">
-                  Current account balance
-                </p>
-              </CardContent>
-            </Card>
+              }
+            />
+          </MotionItem>
+          <MotionItem className="overflow-hidden">
+            <WebCard
+              title="Balance"
+              value={user?.balance}
+              description="Current account balance"
+              icon={
+                <svg
+                  fill="currentColor"
+                  viewBox="-96 0 512 512"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g id="SVGRepo_iconCarrier">
+                    <path d="M308 96c6.627 0 12-5.373 12-12V44c0-6.627-5.373-12-12-12H12C5.373 32 0 37.373 0 44v44.748c0 6.627 5.373 12 12 12h85.28c27.308 0 48.261 9.958 60.97 27.252H12c-6.627 0-12 5.373-12 12v40c0 6.627 5.373 12 12 12h158.757c-6.217 36.086-32.961 58.632-74.757 58.632H12c-6.627 0-12 5.373-12 12v53.012c0 3.349 1.4 6.546 3.861 8.818l165.052 152.356a12.001 12.001 0 0 0 8.139 3.182h82.562c10.924 0 16.166-13.408 8.139-20.818L116.871 319.906c76.499-2.34 131.144-53.395 138.318-127.906H308c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12h-58.69c-3.486-11.541-8.28-22.246-14.252-32H308z"></path>
+                  </g>
+                </svg>
+              }
+            />
           </MotionItem>
         </MotionContainer>
 
-        <MotionTableContainer className="mt-6 overflow-x-auto">
+        {/* Desktop Data Table - Only visible on medium and larger screens */}
+        <MotionTableContainer className="mt-6 hidden overflow-x-auto md:block">
           <div className="min-w-full px-4 sm:px-2">
             <div className="max-w-[calc(100vw-2rem)] md:max-w-none">
               {isLoadingOrders ? (
