@@ -28,7 +28,7 @@ export default function DashboardLayout({
     <div className="flex overflow-y-hidden">
       <Sidebar />
       <main className="h-[calc(100vh-64px)] w-full overflow-y-hidden">
-        <Header />
+        <Header sentiment={true} />
         {children}
         <BottomTabBar />
       </main>

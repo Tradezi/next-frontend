@@ -152,7 +152,7 @@ export default function DashboardPage() {
         </MotionHeading>
 
         {/* Mobile View Container - Only visible on small screens */}
-        <div className="flex h-[calc(100vh-16rem)] w-full flex-col items-center justify-center gap-2 p-2  md:hidden ">
+        <div className="flex h-[calc(100vh-16rem)] w-full flex-col items-center justify-center gap-2 px-2  md:hidden ">
           <MobileCard
             investedAmount={investedAmount}
             currentPrice={currentPrice}
@@ -162,7 +162,7 @@ export default function DashboardPage() {
             }
             userBalance={user?.balance}
           />
-          <div className="h-full min-h-0 w-full flex-1">
+          <div className="h-full min-h-0 w-full flex-1 py-2">
             <OrderCardList
               orders={orders}
               isLoading={isLoadingOrders}
