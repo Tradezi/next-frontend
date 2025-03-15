@@ -136,9 +136,11 @@ export default function DashboardPage() {
 
   return (
     <PageContainer scrollable={true}>
-      <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
+      <div className="sm:p-4 md:space-y-4 md:p-8 lg:p-2">
         <MotionHeading className="flex items-center justify-between px-2">
-          <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
+          <h2 className="hidden text-2xl font-bold tracking-tight md:block">
+            Dashboard
+          </h2>
         </MotionHeading>
 
         {/* Mobile Card - Only visible on small screens */}

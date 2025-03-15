@@ -2,6 +2,17 @@ import Header from '@/components/layout/header';
 import Sidebar from '@/components/layout/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Metadata } from 'next';
+import {
+  Home,
+  Search,
+  Bell,
+  User,
+  CandlestickChart,
+  Briefcase
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import BottomTabBar, { BottomTabBarSkeleton } from './tabbar';
 
 export const metadata: Metadata = {
   title: 'Dashboard | Tradezi',
@@ -14,11 +25,12 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div className="flex overflow-y-hidden">
       <Sidebar />
-      <main className="w-full flex-1 overflow-hidden">
+      <main className="h-[calc(100vh-64px)] w-full overflow-y-hidden">
         <Header />
         {children}
+        <BottomTabBar />
       </main>
     </div>
   );

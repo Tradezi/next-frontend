@@ -23,7 +23,7 @@ const MarketSentiment = ({ children, ...props }: Props) => {
   const prices = props.data.data;
   const name = props.data.name;
   if (prices.length < 2) {
-    return 'Not enough data to determine trend';
+    return;
   }
 
   // Sort by date in ascending order
