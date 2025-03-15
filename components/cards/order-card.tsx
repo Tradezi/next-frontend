@@ -42,7 +42,7 @@ export function OrderCard({ order, onClick }: OrderCardProps) {
 
           {/* Second row: Stock Symbol and P&L Value */}
           <div className="-mt-0.5 flex items-center justify-between">
-            <h3 className="text-md font-medium tracking-wide text-gray-200">
+            <h3 className="text-sm font-medium tracking-wide text-gray-200">
               {order.stockSymbol}
             </h3>
             <span

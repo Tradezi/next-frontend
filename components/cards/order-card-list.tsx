@@ -39,7 +39,7 @@ export function OrderCardList({
   }
 
   return (
-    <ScrollArea className="h-full w-full rounded-lg border border-border bg-card p-2">
+    <ScrollArea className="h-full w-full rounded-lg border border-none bg-card p-2">
       <div>
         {orders.map((order) => (
           <OrderCard key={order.id} order={order} onClick={onOrderClick} />
