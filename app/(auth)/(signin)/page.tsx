@@ -17,7 +17,7 @@ import {
   MotionScrollIndicator,
   MotionScrollToSection
 } from '@/components/animations/motion-wrapper';
-import { FeatureCard } from '@/components/ui/feature-card';
+import { FeatureCard } from '@/components/cards/feature-card';
 import { Footer } from '@/components/layout/footer';
 import { Icons } from '@/components/icons';
 import { BurgerMenu } from '@/components/layout/burger-menu';
