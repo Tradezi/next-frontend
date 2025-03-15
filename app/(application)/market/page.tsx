@@ -11,6 +11,7 @@ import { Modal } from '@/components/ui/modal';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { StockDetailsModal } from '@/components/stock-details-modal';
+import { StockCardList } from '@/components/cards/stock-card-list';
 
 interface StockMetadata {
   symbol: string;
@@ -192,41 +193,80 @@ export default function MarketPage() {
     <PageContainer scrollable={true}>
       <div className="space-y-4 sm:p-4 md:p-8 lg:p-2">
         <div className="mb-4 flex items-center justify-between px-2">
-          <h2 className="text-2xl font-bold tracking-tight">Stock Market</h2>
+          <h2 className="hidden text-2xl font-bold tracking-tight md:block">
+            Stock Market
+          </h2>
         </div>
 
-        <div className="mt-6 px-4 md:px-2">
-          <DataTable
-            columns={columns}
-            data={stocks}
-            searchKey="symbol"
-            onRowClick={(stock) => setSelectedStock(stock)}
-            onFilteredDataChange={(filteredData) => {
-              const symbols = filteredData.map((stock) => stock.symbol);
+        <div className="mt-4 px-2 md:px-2">
+          {/* Mobile view - Card list */}
+          <div className="block md:hidden">
+            <StockCardList
+              stocks={stocks}
+              isLoading={isLoading}
+              onStockClick={setSelectedStock}
+              onFilteredDataChange={(filteredData) => {
+                const symbols = filteredData.map((stock) => stock.symbol);
 
-              api
-                .post('/stock/price/bulk', { symbols: symbols })
-                .then((response) => {
-                  setStocks((prevStocks) => {
-                    return prevStocks.map((stock) => ({
-                      ...stock,
-                      currentPrice: response.data.find(
-                        (p: PriceInfo) => p.symbol === stock.symbol
-                      )?.currentPrice
-                    }));
+                api
+                  .post('/stock/price/bulk', { symbols: symbols })
+                  .then((response) => {
+                    setStocks((prevStocks) => {
+                      return prevStocks.map((stock) => ({
+                        ...stock,
+                        currentPrice: response.data.find(
+                          (p: PriceInfo) => p.symbol === stock.symbol
+                        )?.currentPrice
+                      }));
+                    });
+                  })
+                  .catch((error) => {
+                    console.error('Stock prices error:', error);
                   });
-                })
-                .catch((error) => {
-                  console.error('Stock prices error:', error);
-                });
-            }}
-            pagination={{
-              currentPage,
-              pageSize: ITEMS_PER_PAGE,
-              totalItems: stocks.length,
-              onPageChange: setCurrentPage
-            }}
-          />
+              }}
+              pagination={{
+                currentPage,
+                pageSize: ITEMS_PER_PAGE,
+                totalItems: stocks.length,
+                onPageChange: setCurrentPage
+              }}
+            />
+          </div>
+
+          {/* Desktop view - Data table */}
+          <div className="hidden md:block">
+            <DataTable
+              columns={columns}
+              data={stocks}
+              searchKey="symbol"
+              onRowClick={(stock) => setSelectedStock(stock)}
+              onFilteredDataChange={(filteredData) => {
+                const symbols = filteredData.map((stock) => stock.symbol);
+
+                api
+                  .post('/stock/price/bulk', { symbols: symbols })
+                  .then((response) => {
+                    setStocks((prevStocks) => {
+                      return prevStocks.map((stock) => ({
+                        ...stock,
+                        currentPrice: response.data.find(
+                          (p: PriceInfo) => p.symbol === stock.symbol
+                        )?.currentPrice
+                      }));
+                    });
+                  })
+                  .catch((error) => {
+                    console.error('Stock prices error:', error);
+                  });
+              }}
+              pagination={{
+                currentPage,
+                pageSize: ITEMS_PER_PAGE,
+                totalItems: stocks.length,
+                onPageChange: setCurrentPage
+              }}
+            />
+          </div>
         </div>
       </div>
 
