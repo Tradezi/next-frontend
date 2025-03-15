@@ -53,8 +53,8 @@ export default function Header() {
           <ScrollArea className="w-full justify-self-start whitespace-nowrap">
             <div className="flex w-96 flex-row space-x-4 p-2 md:w-full md:justify-center">
               <div className="flex flex-row ">
-                {stockIndexes.map((stock) => (
-                  <MarketSentiment data={stock} />
+                {stockIndexes.map((stock, index) => (
+                  <MarketSentiment key={index} data={stock} />
                 ))}
               </div>
             </div>
