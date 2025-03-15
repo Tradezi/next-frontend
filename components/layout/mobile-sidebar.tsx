@@ -86,7 +86,7 @@ export function MobileSidebar({ className }: SidebarProps) {
     <>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
-          <MenuIcon />
+          <MenuIcon size={28} />
         </SheetTrigger>
         <SheetContent
           side="left"
