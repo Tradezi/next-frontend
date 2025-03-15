@@ -1,7 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ReactNode } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { ReactNode, useState, useEffect, useRef } from 'react';
 
 // Animation variants
 export const containerVariants = {
@@ -37,6 +37,23 @@ export const logoVariants = {
       type: 'spring',
       stiffness: 200,
       damping: 15
+    }
+  }
+};
+
+export const scrollIndicatorVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.5
+    }
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.5,
+      delay: 1.0
     }
   }
 };
@@ -171,6 +188,88 @@ export function MotionText({
     >
       {children}
     </motion.p>
+  );
+}
+
+export function MotionScrollIndicator({
+  children,
+  className
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    // Set a timeout to hide the component after 3 seconds
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 3000);
+
+    // Clean up the timer when component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          className={className}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={scrollIndicatorVariants}
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+export function MotionScrollToSection({
+  children,
+  className,
+  id,
+  threshold = 0.3
+}: {
+  children: ReactNode;
+  className?: string;
+  id: string;
+  threshold?: number;
+}) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, {
+    once: false
+  });
+
+  useEffect(() => {
+    if (isInView) {
+      // Scroll to the section with smooth animation when it comes into view
+      const element = document.getElementById(id);
+      if (element) {
+        // Use a small delay to make the animation feel more natural
+        setTimeout(() => {
+          element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 100);
+      }
+    }
+  }, [isInView, id]);
+
+  return (
+    <motion.section
+      id={id}
+      ref={ref}
+      className={className}
+      initial={{ opacity: 0.9 }}
+      animate={isInView ? { opacity: 1 } : { opacity: 0.9 }}
+      transition={{ duration: 0.5 }}
+    >
+      {children}
+    </motion.section>
   );
 }
 
