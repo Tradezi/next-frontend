@@ -27,7 +27,7 @@ export function OrderCardList({
 
   if (orders.length === 0) {
     return (
-      <div className="mx-4 flex h-[400px] w-full flex-col items-center justify-center rounded-lg border border-border bg-card py-8 text-center">
+      <div className="flex h-[400px] w-full flex-col items-center justify-center rounded-lg border border-none bg-card py-8 text-center">
         <p className="mb-4 text-sm text-muted-foreground">
           You don&apos;t have any stocks in your portfolio yet.
         </p>

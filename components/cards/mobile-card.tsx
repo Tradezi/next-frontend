@@ -18,7 +18,7 @@ export function MobileCard({
   userBalance
 }: MobileCardProps) {
   return (
-    <Card className="mx-4 w-full overflow-hidden">
+    <Card className="mx-4 w-full overflow-hidden bg-muted px-4 py-2 md:p-0">
       <CardContent className="p-2">
         <div className="flex flex-col space-y-0">
           {/* First Row - Total Invested and Current Value */}

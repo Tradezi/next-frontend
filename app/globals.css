@@ -2,6 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* add the code bellow */
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+    /* 100% { transform: translateX(0); } */
+  }
+
+  @keyframes scrolldesktop {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+    /* 100% { transform: translateX(0); } */
+  }
+  .scrolling-mobile {
+    animation: scroll 25s linear infinite;
+  }
+
+  .scrolling-desktop {
+    animation: scrolldesktop 10s linear infinite;
+  }
+}
+
 @layer base {
   :root {
     --background: 20 66% 99%;
